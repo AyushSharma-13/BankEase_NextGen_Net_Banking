@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "cd BankEase-Frontend && npm ci && npm run build",
+  "outputDirectory": "BankEase-Frontend/dist/BankEase-Frontend/browser",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
