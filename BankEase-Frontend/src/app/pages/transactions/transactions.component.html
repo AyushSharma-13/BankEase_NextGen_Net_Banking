@@ -1,0 +1,175 @@
+<div class="transactions-page">
+  <div class="page-header">
+    <div>
+      <h1>Transactions & Account Activity</h1>
+      <p class="text-muted">Real-time ledger entries, credits, debits and payment logs.</p>
+    </div>
+  </div>
+
+  <!-- Filter Card -->
+  <div class="card filter-card">
+    <div class="filter-grid">
+      <!-- Search Input -->
+      <div class="form-group mb-0">
+        <label class="form-label text-xs">Search Keywords</label>
+        <div class="input-icon-wrap">
+          <i class="fa-solid fa-magnifying-glass input-icon"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="applyFilter()"
+            placeholder="Search description or Ref No..."
+            class="form-control with-icon"
+          />
+        </div>
+      </div>
+
+      <!-- Type Filter -->
+      <div class="form-group mb-0">
+        <label class="form-label text-xs">Transaction Type</label>
+        <select [(ngModel)]="selectedType" (change)="applyFilter()" class="form-control form-select">
+          <option value="">All Types (Credit & Debit)</option>
+          <option value="CREDIT">Credits (+)</option>
+          <option value="DEBIT">Debits (-)</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="form-group mb-0">
+        <label class="form-label text-xs">Status</label>
+        <select [(ngModel)]="selectedStatus" (change)="applyFilter()" class="form-control form-select">
+          <option value="">All Statuses</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="PENDING">Pending</option>
+          <option value="FAILED">Failed</option>
+        </select>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div class="filter-actions">
+        <button (click)="applyFilter()" class="btn btn-primary btn-sm">Filter</button>
+        <button (click)="resetFilter()" class="btn btn-secondary btn-sm">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions Table Card -->
+  <div class="card">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Description</th>
+            <th>Reference No</th>
+            <th>Account No</th>
+            <th>Type</th>
+            <th>Amount (INR)</th>
+            <th>Balance After</th>
+            <th>Status</th>
+            <th>Receipt</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let txn of transactions()">
+            <td class="text-xs text-muted">{{ txn.createdAt | date:'medium' }}</td>
+            <td class="font-medium">{{ txn.description }}</td>
+            <td class="font-mono text-xs text-primary-600 font-bold">{{ txn.referenceNo }}</td>
+            <td class="font-mono text-muted text-xs">{{ txn.accountNo }}</td>
+            <td>
+              <span class="badge" [class.badge-info]="txn.type === 'CREDIT'" [class.badge-warning]="txn.type === 'DEBIT'">
+                {{ txn.type }}
+              </span>
+            </td>
+            <td>
+              <span [class.amount-credit]="txn.type === 'CREDIT'" [class.amount-debit]="txn.type === 'DEBIT'">
+                {{ txn.type === 'CREDIT' ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
+              </span>
+            </td>
+            <td class="font-mono text-xs">₹{{ txn.balanceAfter | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge badge-success">{{ txn.status }}</span>
+            </td>
+            <td>
+              <button (click)="viewDetails(txn)" class="btn btn-secondary btn-sm" title="View Transaction Voucher">
+                <i class="fa-solid fa-receipt"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="!transactions().length && !loading()">
+            <td colspan="9" class="text-center py-10 text-muted">No transactions found matching your criteria.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-footer" *ngIf="totalPages() > 1">
+      <span class="text-xs text-muted">Total {{ totalElements() }} transaction records</span>
+      <div class="page-btns">
+        <button
+          (click)="loadTransactions(currentPage() - 1)"
+          [disabled]="currentPage() === 0"
+          class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-chevron-left"></i> Prev
+        </button>
+        <span class="page-counter text-xs font-bold">Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+        <button
+          (click)="loadTransactions(currentPage() + 1)"
+          [disabled]="currentPage() + 1 >= totalPages()"
+          class="btn btn-secondary btn-sm">
+          Next <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaction Receipt Modal -->
+  <div class="modal-backdrop" *ngIf="selectedTxn()">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="font-bold">Transaction Receipt Voucher</h3>
+        <button (click)="selectedTxn.set(null)" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="receipt-voucher">
+          <div class="voucher-top text-center">
+            <span class="text-xs uppercase text-muted tracking-wider">BankEase Digital Proof</span>
+            <div class="voucher-amount font-mono" [class.amount-credit]="selectedTxn()?.type === 'CREDIT'" [class.amount-debit]="selectedTxn()?.type === 'DEBIT'">
+              {{ selectedTxn()?.type === 'CREDIT' ? '+' : '-' }}₹{{ selectedTxn()?.amount | number:'1.2-2' }}
+            </div>
+            <span class="badge badge-success">{{ selectedTxn()?.status }}</span>
+          </div>
+
+          <div class="voucher-meta">
+            <div class="voucher-row">
+              <span class="lbl">Reference ID:</span>
+              <span class="val font-mono">{{ selectedTxn()?.referenceNo }}</span>
+            </div>
+            <div class="voucher-row">
+              <span class="lbl">Date:</span>
+              <span class="val">{{ selectedTxn()?.createdAt | date:'medium' }}</span>
+            </div>
+            <div class="voucher-row">
+              <span class="lbl">Account:</span>
+              <span class="val font-mono">{{ selectedTxn()?.accountNo }}</span>
+            </div>
+            <div class="voucher-row">
+              <span class="lbl">Description:</span>
+              <span class="val">{{ selectedTxn()?.description }}</span>
+            </div>
+            <div class="voucher-row">
+              <span class="lbl">Balance After:</span>
+              <span class="val font-mono">₹{{ selectedTxn()?.balanceAfter | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button (click)="selectedTxn.set(null)" class="btn btn-secondary">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

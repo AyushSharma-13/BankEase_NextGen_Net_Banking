@@ -1,0 +1,242 @@
+<div class="transfers-page">
+  <div class="page-header">
+    <div>
+      <h1>Domestic & Instant Fund Transfers</h1>
+      <p class="text-muted">Atomic debit & credit transactions secured by 2-Factor simulated OTP.</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tab-pills">
+      <button (click)="activeTab.set('transfer')" [class.active]="activeTab() === 'transfer'" class="tab-btn">
+        <i class="fa-solid fa-paper-plane"></i> Send Money
+      </button>
+      <button (click)="activeTab.set('history')" [class.active]="activeTab() === 'history'" class="tab-btn">
+        <i class="fa-solid fa-clock-rotate-left"></i> Transfer History
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 1: TRANSFER WIZARD -->
+  <div class="tab-content" *ngIf="activeTab() === 'transfer'">
+    <!-- Success Confirmation Receipt -->
+    <div class="card receipt-card" *ngIf="completedTransfer()">
+      <div class="receipt-header text-center">
+        <div class="success-icon-wrap">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h2>Transfer Successful!</h2>
+        <p class="text-muted">Your funds have been transferred atomically.</p>
+        <div class="receipt-amount font-mono">₹{{ completedTransfer()?.amount | number:'1.2-2' }}</div>
+      </div>
+
+      <div class="receipt-details">
+        <div class="receipt-row">
+          <span class="lbl">Reference Number</span>
+          <span class="val font-mono font-bold text-primary-600">{{ completedTransfer()?.referenceNo }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Source Account</span>
+          <span class="val font-mono">{{ completedTransfer()?.sourceAccountNo }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Recipient Account</span>
+          <span class="val font-mono">{{ completedTransfer()?.destinationAccountNo }}</span>
+        </div>
+        <div class="receipt-row" *ngIf="completedTransfer()?.remarks">
+          <span class="lbl">Remarks</span>
+          <span class="val">{{ completedTransfer()?.remarks }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Date & Time</span>
+          <span class="val text-muted text-xs">{{ completedTransfer()?.timestamp | date:'medium' }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Status</span>
+          <span class="badge badge-success">{{ completedTransfer()?.status }}</span>
+        </div>
+      </div>
+
+      <div class="receipt-actions">
+        <button (click)="resetForm()" class="btn btn-primary btn-block">
+          <i class="fa-solid fa-plus"></i> Initiate Another Transfer
+        </button>
+      </div>
+    </div>
+
+    <!-- Transfer Input Form -->
+    <div class="card form-card" *ngIf="!completedTransfer()">
+      <div class="alert alert-danger" *ngIf="errorMessage()">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+
+      <form (ngSubmit)="initiateTransfer()" class="transfer-form">
+        <!-- 1. Source Account -->
+        <div class="form-group">
+          <label class="form-label">Select Source Account *</label>
+          <select [(ngModel)]="sourceAccountId" name="sourceAccount" class="form-control form-select" required>
+            <option *ngFor="let acc of accounts()" [value]="acc.accountId">
+              {{ acc.accountType }} - {{ acc.accountNo }} (Available: ₹{{ acc.balance | number:'1.2-2' }})
+            </option>
+          </select>
+        </div>
+
+        <!-- 2. Beneficiary Selector or Manual -->
+        <div class="form-group" *ngIf="beneficiaries().length > 0">
+          <label class="form-label">Choose Saved Beneficiary (Optional)</label>
+          <div class="beneficiary-chips">
+            <button type="button"
+                    *ngFor="let b of beneficiaries()"
+                    (click)="onBeneficiarySelect(b.beneficiaryId)"
+                    [class.chip-selected]="selectedBeneficiaryId === b.beneficiaryId"
+                    class="beneficiary-chip">
+              <span class="chip-avatar">{{ b.name.charAt(0) }}</span>
+              <div class="chip-info">
+                <span class="chip-name">{{ b.name }}</span>
+                <span class="chip-acc">{{ b.bankName }}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3. Destination Account Number -->
+        <div class="form-group">
+          <label class="form-label" for="destAcc">Recipient Account Number *</label>
+          <input
+            type="text"
+            id="destAcc"
+            name="destAcc"
+            [(ngModel)]="destinationAccountNo"
+            class="form-control font-mono"
+            placeholder="Enter 9-18 digit account number"
+            required
+          />
+        </div>
+
+        <!-- 4. Transfer Amount -->
+        <div class="form-group">
+          <label class="form-label" for="amount">Transfer Amount (INR) *</label>
+          <div class="input-currency-wrap">
+            <span class="currency-prefix">₹</span>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              [(ngModel)]="amount"
+              class="form-control currency-input font-mono"
+              placeholder="0.00"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- 5. Remarks -->
+        <div class="form-group">
+          <label class="form-label" for="remarks">Payment Remarks / Purpose</label>
+          <input
+            type="text"
+            id="remarks"
+            name="remarks"
+            [(ngModel)]="remarks"
+            class="form-control"
+            placeholder="e.g. Monthly rent, consulting invoice, family support"
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" [disabled]="loading()">
+          <span *ngIf="!loading()"><i class="fa-solid fa-lock"></i> Proceed to Security Verification</span>
+          <span *ngIf="loading()"><i class="fa-solid fa-spinner fa-spin"></i> Generating OTP...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB 2: TRANSFER HISTORY -->
+  <div class="tab-content" *ngIf="activeTab() === 'history'">
+    <div class="card">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Reference ID</th>
+              <th>From Account</th>
+              <th>To Account</th>
+              <th>Remarks</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let trf of history()">
+              <td class="text-muted text-xs">{{ trf.timestamp | date:'medium' }}</td>
+              <td class="font-mono text-xs font-bold text-primary-600">{{ trf.referenceNo }}</td>
+              <td class="font-mono">{{ trf.sourceAccountNo }}</td>
+              <td class="font-mono">{{ trf.destinationAccountNo }}</td>
+              <td class="text-muted">{{ trf.remarks || '—' }}</td>
+              <td class="font-mono font-bold amount-debit">-₹{{ trf.amount | number:'1.2-2' }}</td>
+              <td><span class="badge badge-success">{{ trf.status }}</span></td>
+            </tr>
+            <tr *ngIf="!history().length">
+              <td colspan="7" class="text-center py-8 text-muted">No transfers recorded yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulated OTP Modal -->
+  <div class="modal-backdrop" *ngIf="showOtpModal()">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-primary-600"></i>
+          <h3 class="font-bold">Simulated Two-Factor Authentication</h3>
+        </div>
+        <button (click)="showOtpModal.set(false)" class="btn-icon">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-sm text-muted mb-4">
+          For security, a 6-digit One-Time Password (OTP) has been dispatched to your registered phone & email for transferring
+          <strong>₹{{ amount | number:'1.2-2' }}</strong> to account <strong>{{ destinationAccountNo }}</strong>.
+        </p>
+
+        <!-- Academic Simulation Banner -->
+        <div class="otp-simulation-pill">
+          <i class="fa-solid fa-mobile-screen-button text-amber-500"></i>
+          <div>
+            <span class="text-xs text-muted block">Simulated Received OTP Token:</span>
+            <span class="otp-code-highlight font-mono">{{ generatedOtp() || '123456' }}</span>
+          </div>
+        </div>
+
+        <div class="form-group mt-4">
+          <label class="form-label" for="otpInput">Enter 6-Digit OTP Code</label>
+          <input
+            type="text"
+            id="otpInput"
+            name="otpInput"
+            [(ngModel)]="otpCode"
+            maxlength="6"
+            class="form-control font-mono text-center text-xl tracking-widest"
+            placeholder="123456"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="showOtpModal.set(false)" class="btn btn-secondary">Cancel</button>
+        <button type="button" (click)="confirmTransfer()" class="btn btn-primary" [disabled]="loading()">
+          <span *ngIf="!loading()"><i class="fa-solid fa-check"></i> Authorize Transfer</span>
+          <span *ngIf="loading()"><i class="fa-solid fa-spinner fa-spin"></i> Processing...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

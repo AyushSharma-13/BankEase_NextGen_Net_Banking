@@ -1,0 +1,173 @@
+<div class="layout-container">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="!sidebarOpen()">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div class="brand-info" *ngIf="sidebarOpen()">
+        <span class="brand-title">BankEase</span>
+        <span class="brand-badge">NextGen Banking</span>
+      </div>
+    </div>
+
+    <div class="nav-section-title" *ngIf="sidebarOpen()">MAIN SERVICES</div>
+
+    <nav class="sidebar-nav">
+      <!-- Customer Links -->
+      <ng-container *ngIf="authService.currentUser()?.role === 'CUSTOMER'">
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-chart-pie nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Dashboard</span>
+        </a>
+
+        <a routerLink="/accounts" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-wallet nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Accounts</span>
+        </a>
+
+        <a routerLink="/transfers" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-arrow-right-arrow-left nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Fund Transfer</span>
+        </a>
+
+        <a routerLink="/beneficiaries" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-users nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Beneficiaries</span>
+        </a>
+
+        <a routerLink="/transactions" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-receipt nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Transactions</span>
+        </a>
+
+        <a routerLink="/bills" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-bolt nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Bill Payments</span>
+        </a>
+
+        <a routerLink="/loans" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-landmark nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Loan Services</span>
+        </a>
+
+        <a routerLink="/investments" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-arrow-trend-up nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Investments</span>
+        </a>
+
+        <a routerLink="/notifications" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-bell nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Notifications</span>
+          <span class="badge-count" *ngIf="sidebarOpen() && notificationService.unreadCount() > 0">
+            {{ notificationService.unreadCount() }}
+          </span>
+        </a>
+      </ng-container>
+
+      <!-- Staff Links -->
+      <ng-container *ngIf="authService.currentUser()?.role === 'BANK_STAFF'">
+        <a routerLink="/staff" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-user-tie nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Staff Portal</span>
+        </a>
+        <a routerLink="/staff" [queryParams]="{tab: 'loans'}" class="nav-item">
+          <i class="fa-solid fa-file-circle-check nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Review Loans</span>
+        </a>
+        <a routerLink="/staff" [queryParams]="{tab: 'investments'}" class="nav-item">
+          <i class="fa-solid fa-piggy-bank nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Manage Investments</span>
+        </a>
+      </ng-container>
+
+      <!-- Admin Links -->
+      <ng-container *ngIf="authService.currentUser()?.role === 'ADMIN'">
+        <a routerLink="/admin" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-sliders nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Admin Command</span>
+        </a>
+        <a routerLink="/admin" [queryParams]="{tab: 'users'}" class="nav-item">
+          <i class="fa-solid fa-users-gear nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">User Control</span>
+        </a>
+        <a routerLink="/admin" [queryParams]="{tab: 'accounts'}" class="nav-item">
+          <i class="fa-solid fa-building-columns nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Account Monitoring</span>
+        </a>
+        <a routerLink="/admin" [queryParams]="{tab: 'audit'}" class="nav-item">
+          <i class="fa-solid fa-shield-cat nav-icon"></i>
+          <span class="nav-text" *ngIf="sidebarOpen()">Audit Trail</span>
+        </a>
+      </ng-container>
+
+      <div class="nav-section-title" *ngIf="sidebarOpen()">ACCOUNT SETTINGS</div>
+
+      <a routerLink="/profile" routerLinkActive="active" class="nav-item">
+        <i class="fa-solid fa-user-circle nav-icon"></i>
+        <span class="nav-text" *ngIf="sidebarOpen()">Profile & Security</span>
+      </a>
+
+      <button (click)="logout()" class="nav-item logout-btn">
+        <i class="fa-solid fa-right-from-bracket nav-icon"></i>
+        <span class="nav-text" *ngIf="sidebarOpen()">Sign Out</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button (click)="toggleSidebar()" class="btn-icon" title="Toggle Navigation">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <span class="portal-badge" [class.badge-admin]="authService.currentUser()?.role === 'ADMIN'" [class.badge-staff]="authService.currentUser()?.role === 'BANK_STAFF'">
+          {{ authService.currentUser()?.role }} PORTAL
+        </span>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Notification Bell -->
+        <a routerLink="/notifications" class="notification-trigger" title="Notifications">
+          <i class="fa-solid fa-bell"></i>
+          <span class="notif-pill" *ngIf="notificationService.unreadCount() > 0">
+            {{ notificationService.unreadCount() }}
+          </span>
+        </a>
+
+        <!-- User Profile Pill -->
+        <div class="user-pill" (click)="toggleProfile()">
+          <div class="user-avatar">
+            {{ authService.currentUser()?.customerName?.charAt(0) || 'U' }}
+          </div>
+          <div class="user-meta">
+            <span class="user-name">{{ authService.currentUser()?.customerName }}</span>
+            <span class="user-handle">&#64;{{ authService.currentUser()?.username }}</span>
+          </div>
+          <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+        </div>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown-menu" *ngIf="profileDropdownOpen()">
+          <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
+            <i class="fa-solid fa-id-card"></i> View Profile
+          </a>
+          <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
+            <i class="fa-solid fa-key"></i> Change Password
+          </a>
+          <div class="dropdown-divider"></div>
+          <button (click)="logout()" class="dropdown-item text-danger">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

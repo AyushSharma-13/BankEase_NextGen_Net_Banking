@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # MySQL 8.0 Database
+  db:
+    image: mysql:8.0
+    container_name: bankease-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: bankease_db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: bankease
+      MYSQL_PASSWORD: Password@123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./Database/sample-data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bankease-network
+
+  # Spring Boot Backend API
+  backend:
+    build:
+      context: ./BankEase-Backend
+      dockerfile: Dockerfile
+    container_name: bankease-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bankease_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: bankease
+      SPRING_DATASOURCE_PASSWORD: Password@123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_FLYWAY_ENABLED: "true"
+      JWT_SECRET: c2VjdXJlQmFua0Vhc2VTY3VyZVNlY3JldEtleTIwMjZGb3JKV1RUb2tlbkF1dGhlbnRpY2F0aW9uVmVyeVNlY3VyZQ==
+      CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:80,http://localhost:4200
+    ports:
+      - "8080:8080"
+    networks:
+      - bankease-network
+
+  # Angular Frontend UI
+  frontend:
+    build:
+      context: ./BankEase-Frontend
+      dockerfile: Dockerfile
+    container_name: bankease-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - bankease-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  bankease-network:
+    driver: bridge

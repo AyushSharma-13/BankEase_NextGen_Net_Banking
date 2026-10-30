@@ -1,0 +1,247 @@
+<div class="loans-page">
+  <div class="page-header">
+    <div>
+      <h1>Digital Loan Services & EMI Planner</h1>
+      <p class="text-muted">Instant pre-approved loans with flexible tenures and transparent interest rates.</p>
+    </div>
+    <button (click)="openApplyModal()" class="btn btn-primary">
+      <i class="fa-solid fa-file-signature"></i> Apply for Loan
+    </button>
+  </div>
+
+  <!-- EMI Calculator Widget Card -->
+  <div class="card emi-calc-card">
+    <div class="calc-grid">
+      <div class="calc-inputs">
+        <div class="calc-header">
+          <i class="fa-solid fa-calculator text-primary-600 text-xl"></i>
+          <h3>Smart Loan EMI Calculator</h3>
+        </div>
+
+        <!-- Slider 1: Amount -->
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Loan Amount</span>
+            <span class="slider-val font-mono">₹{{ calcAmount | number }}</span>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="calcAmount"
+            (input)="calculateEmi()"
+            min="50000"
+            max="10000000"
+            step="50000"
+            class="range-slider"
+          />
+        </div>
+
+        <!-- Slider 2: Interest Rate -->
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Interest Rate (% p.a.)</span>
+            <span class="slider-val font-mono">{{ calcRate }}%</span>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="calcRate"
+            (input)="calculateEmi()"
+            min="6.5"
+            max="18"
+            step="0.25"
+            class="range-slider"
+          />
+        </div>
+
+        <!-- Slider 3: Tenure -->
+        <div class="slider-group">
+          <div class="slider-label">
+            <span>Tenure (Months)</span>
+            <span class="slider-val font-mono">{{ calcTenureMonths }} Months ({{ (calcTenureMonths / 12) | number:'1.1-1' }} Yrs)</span>
+          </div>
+          <input
+            type="range"
+            [(ngModel)]="calcTenureMonths"
+            (input)="calculateEmi()"
+            min="12"
+            max="360"
+            step="12"
+            class="range-slider"
+          />
+        </div>
+      </div>
+
+      <!-- EMI Output Box -->
+      <div class="calc-output">
+        <span class="text-xs text-slate-300 uppercase tracking-widest">Monthly Payable EMI</span>
+        <div class="emi-large-amount font-mono">₹{{ calculatedEmi() | number }}</div>
+        <div class="output-divider"></div>
+        <div class="output-sub">
+          <div class="row">
+            <span>Principal Amount</span>
+            <span class="font-mono">₹{{ calcAmount | number }}</span>
+          </div>
+          <div class="row">
+            <span>Total Payable</span>
+            <span class="font-mono">₹{{ (calculatedEmi() * calcTenureMonths) | number }}</span>
+          </div>
+        </div>
+        <button (click)="openApplyModal()" class="btn btn-success btn-block mt-4">
+          Apply With This Plan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loan Products Grid -->
+  <div class="section-block">
+    <h2>Available Loan Offerings</h2>
+    <div class="loan-products-grid">
+      <div class="card product-card" *ngFor="let p of loanTypes()">
+        <div class="product-top">
+          <span class="rate-badge">{{ p.interestRate }}% p.a.</span>
+          <span class="tenure-badge">Up to {{ p.maxTenureMonths }} mos</span>
+        </div>
+
+        <h3>{{ p.name }}</h3>
+        <p class="product-desc">{{ p.description }}</p>
+
+        <div class="product-meta">
+          <div>
+            <span class="lbl">Min Amount</span>
+            <span class="val font-mono">₹{{ p.minAmount | number }}</span>
+          </div>
+          <div>
+            <span class="lbl">Max Amount</span>
+            <span class="val font-mono">₹{{ p.maxAmount | number }}</span>
+          </div>
+        </div>
+
+        <button (click)="openApplyModal(p)" class="btn btn-outline-primary btn-block btn-sm mt-4">
+          Apply Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Loan Applications Table -->
+  <div class="section-block">
+    <h2>My Loan Applications</h2>
+    <div class="card mt-4">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Applied Date</th>
+              <th>Loan Type</th>
+              <th>Principal Amount</th>
+              <th>Rate</th>
+              <th>Tenure</th>
+              <th>Monthly EMI</th>
+              <th>Status</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let loan of myLoans()">
+              <td class="text-xs text-muted">{{ loan.createdAt | date:'medium' }}</td>
+              <td class="font-bold">{{ loan.loanType }}</td>
+              <td class="font-mono font-bold">₹{{ loan.amount | number:'1.2-2' }}</td>
+              <td class="font-mono">{{ loan.interestRate }}%</td>
+              <td>{{ loan.tenureMonths }} mos</td>
+              <td class="font-mono font-bold text-primary-600">₹{{ loan.monthlyEmi | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge"
+                      [class.badge-approved]="loan.status === 'APPROVED'"
+                      [class.badge-under_review]="loan.status === 'UNDER_REVIEW' || loan.status === 'SUBMITTED'"
+                      [class.badge-rejected]="loan.status === 'REJECTED'">
+                  {{ loan.status }}
+                </span>
+              </td>
+              <td class="text-xs text-muted">{{ loan.remarks || 'Under routine verification' }}</td>
+            </tr>
+            <tr *ngIf="!myLoans().length">
+              <td colspan="8" class="text-center py-8 text-muted">You haven't submitted any loan applications yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apply Modal -->
+  <div class="modal-backdrop" *ngIf="showApplyModal()">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="font-bold">Submit Loan Application</h3>
+        <button (click)="showApplyModal.set(false)" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form (ngSubmit)="submitApplication()">
+        <div class="modal-body">
+          <div class="alert alert-danger" *ngIf="errorMessage()">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Loan Product *</label>
+            <select [(ngModel)]="applyType" (change)="updateModalEmi()" name="applyType" class="form-control form-select" required>
+              <option *ngFor="let t of loanTypes()" [value]="t.type">{{ t.name }} ({{ t.interestRate }}% p.a.)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appAmt">Required Loan Amount (INR) *</label>
+            <input
+              type="number"
+              id="appAmt"
+              name="appAmt"
+              [(ngModel)]="applyAmount"
+              (input)="updateModalEmi()"
+              class="form-control font-mono"
+              placeholder="1000000"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appTenure">Tenure (in Months) *</label>
+            <input
+              type="number"
+              id="appTenure"
+              name="appTenure"
+              [(ngModel)]="applyTenure"
+              (input)="updateModalEmi()"
+              class="form-control font-mono"
+              placeholder="120"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="appRemarks">Purpose / Comments</label>
+            <input
+              type="text"
+              id="appRemarks"
+              name="appRemarks"
+              [(ngModel)]="applyRemarks"
+              class="form-control"
+              placeholder="e.g. Property purchase or tuition fees"
+            />
+          </div>
+
+          <!-- Estimated EMI Pill -->
+          <div class="emi-preview-box">
+            <span class="text-xs text-muted block">Estimated Monthly EMI:</span>
+            <span class="font-mono font-bold text-xl text-primary-600">₹{{ modalEmi() | number }} / month</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="showApplyModal.set(false)" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

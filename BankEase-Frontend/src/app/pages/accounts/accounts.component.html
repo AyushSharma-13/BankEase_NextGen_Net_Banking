@@ -1,0 +1,115 @@
+<div class="accounts-page">
+  <div class="page-header">
+    <div>
+      <h1>Account Portfolio & Ledgers</h1>
+      <p class="text-muted">Manage your active savings, current, and payroll accounts.</p>
+    </div>
+  </div>
+
+  <div class="accounts-layout">
+    <!-- Left Accounts List Column -->
+    <div class="accounts-list-col">
+      <div class="account-card-item"
+           *ngFor="let acc of accounts()"
+           [class.active-card]="selectedAccount()?.accountId === acc.accountId"
+           (click)="selectAccount(acc)">
+        <div class="card-item-header">
+          <span class="type-tag">{{ acc.accountType }}</span>
+          <span class="badge badge-active">{{ acc.status }}</span>
+        </div>
+
+        <div class="card-item-no">
+          <span>{{ acc.accountNo }}</span>
+        </div>
+
+        <div class="card-item-balance">
+          <span class="text-xs text-muted">Balance</span>
+          <span class="val">₹{{ acc.balance | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Account Details & Statement Column -->
+    <div class="account-details-col" *ngIf="selectedAccount()">
+      <div class="card details-header-card">
+        <div class="header-main-info">
+          <div>
+            <span class="text-xs font-bold text-primary-600 tracking-wider uppercase">{{ selectedAccount()?.accountType }} ACCOUNT DETAILS</span>
+            <div class="account-num-row">
+              <h2>{{ selectedAccount()?.accountNo }}</h2>
+              <button (click)="copyAccountNo(selectedAccount()!.accountNo)" class="copy-pill">
+                <i class="fa-regular fa-copy"></i>
+                <span *ngIf="copiedAccount()">Copied!</span>
+                <span *ngIf="!copiedAccount()">Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="balance-display text-right">
+            <span class="text-xs text-muted">Available Net Balance</span>
+            <div class="balance-val">₹{{ selectedAccount()?.balance | number:'1.2-2' }}</div>
+          </div>
+        </div>
+
+        <div class="header-actions-row">
+          <button (click)="downloadStatement(selectedAccount()!.accountId)" class="btn btn-primary" [disabled]="downloading()">
+            <i class="fa-solid fa-download"></i>
+            <span *ngIf="!downloading()">Download Official Statement</span>
+            <span *ngIf="downloading()">Generating Statement...</span>
+          </button>
+          <a [routerLink]="['/transfers']" [queryParams]="{fromAccount: selectedAccount()?.accountId}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-right-arrow-left"></i> Send Money
+          </a>
+        </div>
+      </div>
+
+      <!-- Account Transactions -->
+      <div class="card mt-6">
+        <div class="card-header-flex">
+          <h3>Statement Transactions</h3>
+          <span class="text-xs text-muted">Showing recent 20 activities</span>
+        </div>
+
+        <div class="table-container mt-4">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Description</th>
+                <th>Reference No</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let txn of transactions()">
+                <td class="text-muted text-xs">{{ txn.createdAt | date:'medium' }}</td>
+                <td class="font-medium">{{ txn.description }}</td>
+                <td class="text-xs text-muted font-mono">{{ txn.referenceNo }}</td>
+                <td>
+                  <span class="badge" [class.badge-info]="txn.type === 'CREDIT'" [class.badge-warning]="txn.type === 'DEBIT'">
+                    {{ txn.type }}
+                  </span>
+                </td>
+                <td>
+                  <span [class.amount-credit]="txn.type === 'CREDIT'" [class.amount-debit]="txn.type === 'DEBIT'">
+                    {{ txn.type === 'CREDIT' ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
+                  </span>
+                </td>
+                <td class="font-mono text-xs">₹{{ txn.balanceAfter | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge badge-success">{{ txn.status }}</span>
+                </td>
+              </tr>
+              <tr *ngIf="!transactions().length">
+                <td colspan="7" class="text-center py-8 text-muted">No transactions on this account yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

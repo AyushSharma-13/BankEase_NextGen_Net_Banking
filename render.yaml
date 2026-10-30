@@ -1,0 +1,40 @@
+services:
+  # Backend API Service
+  - type: web
+    name: bankease-backend
+    env: docker
+    dockerfilePath: ./BankEase-Backend/Dockerfile
+    dockerContext: ./BankEase-Backend
+    plan: standard
+    region: oregon
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: bankease-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://bankease-frontend.onrender.com,http://localhost:4200
+
+  # Frontend Web Service (Static Site)
+  - type: static
+    name: bankease-frontend
+    buildCommand: cd BankEase-Frontend && npm ci && npm run build
+    staticPublishPath: ./BankEase-Frontend/dist/BankEase-Frontend/browser
+    region: oregon
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 20.10.0
+
+databases:
+  - name: bankease-db
+    databaseName: bankease_db
+    user: bankease
+    plan: standard

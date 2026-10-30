@@ -1,0 +1,167 @@
+.loans-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 4px;
+}
+
+/* EMI Calculator */
+.emi-calc-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+}
+
+.calc-inputs {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.calc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.slider-val {
+  color: var(--primary-600);
+  font-weight: 700;
+}
+
+.range-slider {
+  width: 100%;
+  accent-color: var(--primary-600);
+  cursor: pointer;
+}
+
+.calc-output {
+  background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.emi-large-amount {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #60a5fa;
+  margin: 8px 0 16px;
+}
+
+.output-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-bottom: 16px;
+}
+
+.output-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+}
+
+.output-sub .row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-block { width: 100%; }
+
+/* Loan Products */
+.loan-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.product-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.rate-badge {
+  background: var(--emerald-50);
+  color: var(--emerald-700);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+}
+
+.tenure-badge {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.product-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  background: var(--surface-bg);
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+
+.product-meta .lbl { display: block; color: var(--text-muted); font-size: 0.7rem; }
+
+.emi-preview-box {
+  background: var(--primary-50);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  margin-top: 14px;
+}
+
+.mt-4 { margin-top: 16px; }
+
+@media (max-width: 800px) {
+  .calc-grid {
+    grid-template-columns: 1fr;
+  }
+}

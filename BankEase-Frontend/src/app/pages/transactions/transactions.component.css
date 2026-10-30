@@ -1,0 +1,92 @@
+.transactions-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 4px;
+}
+
+.filter-card {
+  padding: 18px 24px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.mb-0 { margin-bottom: 0; }
+
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  margin-top: 16px;
+  border-top: 1px solid var(--surface-border);
+}
+
+.page-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-counter {
+  color: var(--text-muted);
+}
+
+.receipt-voucher {
+  background: var(--surface-bg);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--surface-border);
+}
+
+.voucher-top {
+  margin-bottom: 20px;
+  border-bottom: 1px dashed var(--surface-border);
+  padding-bottom: 16px;
+}
+
+.voucher-amount {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 6px 0 10px;
+}
+
+.voucher-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.voucher-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.voucher-row .lbl {
+  color: var(--text-muted);
+}
+
+.voucher-row .val {
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

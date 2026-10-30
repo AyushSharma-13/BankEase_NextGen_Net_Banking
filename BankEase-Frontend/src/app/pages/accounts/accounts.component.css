@@ -1,0 +1,152 @@
+.accounts-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 4px;
+}
+
+.accounts-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.accounts-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.account-card-item {
+  background: #ffffff;
+  border: 2px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.account-card-item:hover {
+  border-color: var(--primary-500);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.account-card-item.active-card {
+  border-color: var(--primary-600);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, #ffffff 100%);
+  box-shadow: var(--shadow-md);
+}
+
+.card-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.type-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.card-item-no {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.card-item-balance {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-item-balance .val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-main);
+}
+
+/* Details Column */
+.details-header-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.account-num-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.account-num-row h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.85rem;
+}
+
+.copy-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
+  border-radius: 9999px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.copy-pill:hover {
+  color: var(--primary-600);
+  background: var(--primary-50);
+}
+
+.balance-val {
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--emerald-600);
+}
+
+.header-actions-row {
+  display: flex;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--surface-border);
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+
+@media (max-width: 900px) {
+  .accounts-layout {
+    grid-template-columns: 1fr;
+  }
+}

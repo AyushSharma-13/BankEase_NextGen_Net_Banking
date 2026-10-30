@@ -1,0 +1,172 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Bank Staff Operations</h1>
+      <p class="page-subtitle">Underwrite loan applications, verify customer investment requisitions, and audit account compliance.</p>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Tabs -->
+  <div class="staff-tabs">
+    <button class="staff-tab" [class.active]="activeTab === 'LOANS'" (click)="activeTab = 'LOANS'">
+      <i class="fas fa-file-signature"></i> Loan Applications Queue ({{ loans.length }})
+    </button>
+    <button class="staff-tab" [class.active]="activeTab === 'INVESTMENTS'" (click)="activeTab = 'INVESTMENTS'">
+      <i class="fas fa-chart-pie"></i> Investment Requisitions ({{ investments.length }})
+    </button>
+  </div>
+
+  <!-- Tab 1: Loans Queue -->
+  <div *ngIf="activeTab === 'LOANS'" class="card">
+    <h2 class="section-title"><i class="fas fa-tasks text-primary"></i> Pending Loan Applications</h2>
+    <div *ngIf="isLoading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i> Loading loan queue...
+    </div>
+
+    <div *ngIf="!isLoading && loans.length === 0" class="empty-state">
+      <i class="fas fa-check-circle"></i>
+      <h3>Queue Cleared</h3>
+      <p>No loan applications are awaiting staff review.</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && loans.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Application ID</th>
+            <th>Applicant Name</th>
+            <th>Loan Type</th>
+            <th>Amount Requested</th>
+            <th>Tenure & Rate</th>
+            <th>Estimated EMI</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let loan of loans">
+            <td>#{{ loan.loanId }}</td>
+            <td class="font-bold">{{ loan.customerName }}</td>
+            <td>{{ formatType(loan.loanType) }}</td>
+            <td class="font-bold">₹{{ loan.amount | number:'1.2-2' }}</td>
+            <td>{{ loan.tenureMonths }} Mo ({{ loan.interestRate }}%)</td>
+            <td>₹{{ loan.monthlyEmi | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-warning': loan.status === 'SUBMITTED' || loan.status === 'UNDER_REVIEW',
+                'badge-success': loan.status === 'APPROVED',
+                'badge-danger': loan.status === 'REJECTED'
+              }">
+                {{ loan.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons" *ngIf="loan.status === 'SUBMITTED' || loan.status === 'UNDER_REVIEW'">
+                <button class="btn btn-sm btn-success" (click)="openLoanDecision(loan.loanId, 'APPROVED')">
+                  <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="openLoanDecision(loan.loanId, 'REJECTED')">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              </div>
+              <span *ngIf="loan.status !== 'SUBMITTED' && loan.status !== 'UNDER_REVIEW'" class="text-muted text-sm">Reviewed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 2: Investments Queue -->
+  <div *ngIf="activeTab === 'INVESTMENTS'" class="card">
+    <h2 class="section-title"><i class="fas fa-piggy-bank text-primary"></i> Customer Investment Requisitions</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Investment ID</th>
+            <th>Customer Name</th>
+            <th>Plan Type</th>
+            <th>Amount</th>
+            <th>Tenure</th>
+            <th>Expected Rate</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of investments">
+            <td>#{{ inv.investmentId }}</td>
+            <td class="font-bold">{{ inv.customerName }}</td>
+            <td>{{ formatType(inv.investmentType) }}</td>
+            <td class="font-bold">₹{{ inv.amount | number:'1.2-2' }}</td>
+            <td>{{ inv.tenureMonths }} Months</td>
+            <td class="text-success font-semibold">{{ inv.expectedReturnRate }}%</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-warning': inv.status === 'REQUESTED',
+                'badge-success': inv.status === 'ACTIVE',
+                'badge-danger': inv.status === 'CANCELLED'
+              }">
+                {{ inv.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons" *ngIf="inv.status === 'REQUESTED'">
+                <button class="btn btn-sm btn-success" (click)="openInvestmentDecision(inv.investmentId, 'ACTIVE')">
+                  <i class="fas fa-check"></i> Activate
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="openInvestmentDecision(inv.investmentId, 'CANCELLED')">
+                  <i class="fas fa-times"></i> Decline
+                </button>
+              </div>
+              <span *ngIf="inv.status !== 'REQUESTED'" class="text-muted text-sm">Processed</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Decision Confirmation Modal -->
+  <div class="modal-backdrop" *ngIf="showDecisionModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm {{ decisionStatus }} Decision</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          You are about to mark <strong>{{ selectedType }} #{{ selectedItemId }}</strong> as 
+          <span class="font-bold" [class.text-success]="decisionStatus === 'APPROVED' || decisionStatus === 'ACTIVE'" [class.text-danger]="decisionStatus === 'REJECTED' || decisionStatus === 'CANCELLED'">
+            {{ decisionStatus }}
+          </span>.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Underwriter Notes / Remarks</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="decisionRemarks"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="closeModal()">Cancel</button>
+        <button 
+          class="btn" 
+          [ngClass]="decisionStatus === 'APPROVED' || decisionStatus === 'ACTIVE' ? 'btn-success' : 'btn-danger'" 
+          (click)="confirmDecision()" 
+          [disabled]="isProcessing"
+        >
+          <i class="fas fa-spinner fa-spin" *ngIf="isProcessing"></i>
+          {{ isProcessing ? 'Submitting...' : 'Confirm Decision' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

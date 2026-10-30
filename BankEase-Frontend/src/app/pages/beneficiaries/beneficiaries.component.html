@@ -1,0 +1,103 @@
+<div class="beneficiaries-page">
+  <div class="page-header">
+    <div>
+      <h1>Manage Beneficiaries</h1>
+      <p class="text-muted">Register and maintain pre-approved payees for immediate fund transfers.</p>
+    </div>
+    <button (click)="openAddModal()" class="btn btn-primary">
+      <i class="fa-solid fa-user-plus"></i> Add New Payee
+    </button>
+  </div>
+
+  <!-- Beneficiaries Grid -->
+  <div class="beneficiaries-grid">
+    <div class="card beneficiary-card" *ngFor="let b of beneficiaries()">
+      <div class="card-top">
+        <div class="avatar">{{ b.name.charAt(0) }}</div>
+        <div class="actions">
+          <button (click)="openEditModal(b)" class="btn-icon" title="Edit Payee">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+          <button (click)="deleteBeneficiary(b.beneficiaryId)" class="btn-icon text-danger" title="Remove Payee">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="info">
+        <h3>{{ b.name }}</h3>
+        <span class="bank-pill"><i class="fa-solid fa-building-columns"></i> {{ b.bankName }}</span>
+      </div>
+
+      <div class="meta-row">
+        <div>
+          <span class="lbl">Account Number</span>
+          <span class="val font-mono">{{ b.accountNo }}</span>
+        </div>
+        <div>
+          <span class="lbl">IFSC Code</span>
+          <span class="val font-mono">{{ b.ifscCode }}</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a [routerLink]="['/transfers']" [queryParams]="{beneficiaryId: b.beneficiaryId}" class="btn btn-outline-primary btn-block btn-sm">
+          <i class="fa-solid fa-paper-plane"></i> Transfer Funds
+        </a>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!beneficiaries().length && !loading()">
+      <i class="fa-solid fa-users text-4xl text-slate-300"></i>
+      <h3>No beneficiaries added yet</h3>
+      <p class="text-muted">Add trusted recipients to initiate instant money transfers.</p>
+      <button (click)="openAddModal()" class="btn btn-primary mt-4">Add First Beneficiary</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Beneficiary Modal -->
+  <div class="modal-backdrop" *ngIf="showModal()">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="font-bold">{{ isEditing() ? 'Update Beneficiary Details' : 'Add New Beneficiary' }}</h3>
+        <button (click)="showModal.set(false)" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form (ngSubmit)="saveBeneficiary()">
+        <div class="modal-body">
+          <div class="alert alert-danger" *ngIf="errorMessage()">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ errorMessage() }}</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bName">Beneficiary Full Name *</label>
+            <input type="text" id="bName" name="bName" [(ngModel)]="name" class="form-control" placeholder="e.g. Priya Patel" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bAcc">Account Number *</label>
+            <input type="text" id="bAcc" name="bAcc" [(ngModel)]="accountNo" class="form-control font-mono" placeholder="9 to 18 digits" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bBank">Bank Name *</label>
+            <input type="text" id="bBank" name="bBank" [(ngModel)]="bankName" class="form-control" placeholder="e.g. BankEase Net Bank" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bIfsc">IFSC / Routing Code *</label>
+            <input type="text" id="bIfsc" name="bIfsc" [(ngModel)]="ifscCode" class="form-control font-mono uppercase" placeholder="BEAS0001001" required />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" (click)="showModal.set(false)" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            {{ isEditing() ? 'Save Changes' : 'Save Beneficiary' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

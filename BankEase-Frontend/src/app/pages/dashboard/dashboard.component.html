@@ -1,0 +1,177 @@
+<div class="dashboard-page">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading()">
+    <i class="fa-solid fa-circle-notch fa-spin text-3xl text-primary-600"></i>
+    <p>Loading your financial portfolio...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="alert alert-danger" *ngIf="errorMessage() && !loading()">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>{{ errorMessage() }}</span>
+  </div>
+
+  <ng-container *ngIf="overview() && !loading()">
+    <!-- Top Welcome Banner -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h1>Welcome back, {{ overview()?.customerName }}!</h1>
+        <p>Here is the real-time financial summary across all your accounts.</p>
+      </div>
+      <div class="banner-actions">
+        <a routerLink="/transfers" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Quick Transfer</a>
+        <a routerLink="/bills" class="btn btn-secondary"><i class="fa-solid fa-receipt"></i> Pay Bill</a>
+      </div>
+    </div>
+
+    <!-- Quick Metrics Grid -->
+    <div class="metrics-grid">
+      <!-- Total Balance Card -->
+      <div class="stat-card balance-card">
+        <div class="stat-card-header">
+          <span class="stat-label">TOTAL NET BALANCE</span>
+          <i class="fa-solid fa-vault stat-icon"></i>
+        </div>
+        <div class="stat-main">
+          <span class="currency-symbol">₹</span>
+          <span class="stat-value">{{ overview()?.totalBalance | number:'1.2-2' }}</span>
+        </div>
+        <div class="stat-footer">
+          <span class="text-xs text-slate-300">Across {{ overview()?.accounts?.length || 0 }} Active Accounts</span>
+        </div>
+      </div>
+
+      <!-- Quick Stats 1: Unread Notifications -->
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">NOTIFICATIONS</span>
+          <div class="stat-badge-icon warning"><i class="fa-solid fa-bell"></i></div>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value">{{ overview()?.unreadNotificationsCount }}</span>
+        </div>
+        <div class="stat-footer">
+          <a routerLink="/notifications" class="text-xs text-primary-600 font-semibold">View Alert Center →</a>
+        </div>
+      </div>
+
+      <!-- Quick Stats 2: Active Beneficiaries -->
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">BENEFICIARIES</span>
+          <div class="stat-badge-icon info"><i class="fa-solid fa-address-book"></i></div>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value">{{ overview()?.totalBeneficiariesCount }}</span>
+        </div>
+        <div class="stat-footer">
+          <a routerLink="/beneficiaries" class="text-xs text-primary-600 font-semibold">Manage Payees →</a>
+        </div>
+      </div>
+
+      <!-- Quick Stats 3: Loans & Investments -->
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">WEALTH & LOANS</span>
+          <div class="stat-badge-icon success"><i class="fa-solid fa-chart-line"></i></div>
+        </div>
+        <div class="stat-main">
+          <span class="stat-value">{{ (overview()?.activeLoansCount || 0) + (overview()?.activeInvestmentsCount || 0) }}</span>
+        </div>
+        <div class="stat-footer">
+          <span class="text-xs text-muted">{{ overview()?.activeLoansCount }} Loans • {{ overview()?.activeInvestmentsCount }} Investments</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accounts Cards Section -->
+    <div class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Your Bank Accounts</h2>
+          <p class="section-sub">Active checking, savings and deposit ledgers</p>
+        </div>
+        <a routerLink="/accounts" class="btn btn-secondary btn-sm">View All Details</a>
+      </div>
+
+      <div class="accounts-grid">
+        <div class="account-card" *ngFor="let acc of overview()?.accounts">
+          <div class="acc-top">
+            <span class="acc-type">{{ acc.accountType }} ACCOUNT</span>
+            <span class="badge badge-active">{{ acc.status }}</span>
+          </div>
+
+          <div class="acc-no-wrap">
+            <span class="acc-no">{{ acc.accountNo }}</span>
+            <button (click)="copyAccountNo(acc.accountNo)" class="copy-btn" title="Copy Account Number">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+
+          <div class="acc-balance-wrap">
+            <span class="text-xs text-muted">Available Balance</span>
+            <div class="acc-balance">₹{{ acc.balance | number:'1.2-2' }}</div>
+          </div>
+
+          <div class="acc-actions">
+            <a [routerLink]="['/transfers']" [queryParams]="{fromAccount: acc.accountId}" class="btn btn-outline-primary btn-sm">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i> Transfer
+            </a>
+            <a [routerLink]="['/accounts']" class="btn btn-secondary btn-sm">Statement</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <div class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Recent Activity</h2>
+          <p class="section-sub">Latest 10 debits and credits recorded on your account</p>
+        </div>
+        <a routerLink="/transactions" class="btn btn-secondary btn-sm">View Full History</a>
+      </div>
+
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Description</th>
+              <th>Reference No</th>
+              <th>Account</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let txn of overview()?.recentTransactions">
+              <td class="text-muted text-xs">{{ txn.createdAt | date:'medium' }}</td>
+              <td class="font-medium">{{ txn.description }}</td>
+              <td><span class="ref-pill">{{ txn.referenceNo }}</span></td>
+              <td class="text-muted">{{ txn.accountNo }}</td>
+              <td>
+                <span class="badge" [class.badge-info]="txn.type === 'CREDIT'" [class.badge-warning]="txn.type === 'DEBIT'">
+                  {{ txn.type }}
+                </span>
+              </td>
+              <td>
+                <span [class.amount-credit]="txn.type === 'CREDIT'" [class.amount-debit]="txn.type === 'DEBIT'">
+                  {{ txn.type === 'CREDIT' ? '+' : '-' }}₹{{ txn.amount | number:'1.2-2' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge badge-success">{{ txn.status }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="!overview()?.recentTransactions?.length">
+              <td colspan="7" class="text-center py-6 text-muted">No recent transactions recorded yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,96 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">User Account & Security</h1>
+      <p class="page-subtitle">Manage your personal credentials, digital identity, and authentication keys.</p>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <div class="profile-grid">
+    <!-- User Profile Details Card -->
+    <div class="card profile-info-card">
+      <div class="profile-header-banner">
+        <div class="avatar-large">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div>
+          <h2 class="user-fullname">{{ profile?.name || profile?.username }}</h2>
+          <span class="badge" [ngClass]="{
+            'badge-danger': profile?.role === 'ADMIN',
+            'badge-warning': profile?.role === 'BANK_STAFF',
+            'badge-info': profile?.role === 'CUSTOMER'
+          }">
+            {{ profile?.role }}
+          </span>
+        </div>
+      </div>
+
+      <div class="profile-meta-list" *ngIf="profile">
+        <div class="meta-row">
+          <span class="meta-label">Username</span>
+          <span class="meta-val font-mono">{{ profile.username }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Email Address</span>
+          <span class="meta-val">{{ profile.email || 'N/A' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Phone Number</span>
+          <span class="meta-val">{{ profile.phone || 'N/A' }}</span>
+        </div>
+        <div class="meta-row" *ngIf="profile.address">
+          <span class="meta-label">Mailing Address</span>
+          <span class="meta-val">{{ profile.address }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Account Status</span>
+          <span class="badge" [ngClass]="profile.enabled ? 'badge-success' : 'badge-danger'">
+            {{ profile.enabled ? 'ACTIVE & VERIFIED' : 'DISABLED' }}
+          </span>
+        </div>
+        <div class="meta-row" *ngIf="profile.createdAt">
+          <span class="meta-label">Member Since</span>
+          <span class="meta-val text-sm">{{ profile.createdAt | date:'mediumDate' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security & Password Change Card -->
+    <div class="card security-card">
+      <h2 class="section-title"><i class="fas fa-key text-primary"></i> Change Access Password</h2>
+      <p class="text-secondary text-sm" style="margin-bottom: 20px;">
+        For your security, choose a strong password consisting of at least 8 characters with numbers and symbols.
+      </p>
+
+      <form (ngSubmit)="submitPasswordChange()">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" class="form-control" [(ngModel)]="passwordData.currentPassword" name="currentPassword" required placeholder="Enter current password">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" class="form-control" [(ngModel)]="passwordData.newPassword" name="newPassword" required placeholder="Min. 8 characters">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required placeholder="Re-type new password">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 12px;" [disabled]="isChangingPassword">
+          <i class="fas fa-spinner fa-spin" *ngIf="isChangingPassword"></i>
+          {{ isChangingPassword ? 'Updating Password...' : 'Update Password' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

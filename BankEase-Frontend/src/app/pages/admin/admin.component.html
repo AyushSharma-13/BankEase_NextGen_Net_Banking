@@ -1,0 +1,274 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">BankEase Core Administration</h1>
+      <p class="page-subtitle">Real-time system telemetry, user management, account control, and audit logs.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openStaffModal()">
+        <i class="fas fa-user-plus"></i> Provision Bank Staff
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- KPI Metrics Cards -->
+  <div class="stats-grid" *ngIf="metrics">
+    <div class="stat-card">
+      <div class="stat-icon bg-blue">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Users</span>
+        <span class="stat-value">{{ metrics.totalUsers }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-green">
+        <i class="fas fa-vault"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Core Deposits</span>
+        <span class="stat-value">₹{{ metrics.totalDeposits | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-purple">
+        <i class="fas fa-credit-card"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Bank Accounts</span>
+        <span class="stat-value">{{ metrics.totalAccounts }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon bg-amber">
+        <i class="fas fa-hand-holding-usd"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Loan Applications</span>
+        <span class="stat-value">{{ metrics.totalLoans }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav Tabs -->
+  <div class="admin-tabs">
+    <button class="admin-tab" [class.active]="activeTab === 'OVERVIEW'" (click)="activeTab = 'OVERVIEW'">
+      <i class="fas fa-chart-pie"></i> System Telemetry
+    </button>
+    <button class="admin-tab" [class.active]="activeTab === 'USERS'" (click)="activeTab = 'USERS'">
+      <i class="fas fa-user-shield"></i> User Control ({{ users.length }})
+    </button>
+    <button class="admin-tab" [class.active]="activeTab === 'ACCOUNTS'" (click)="activeTab = 'ACCOUNTS'">
+      <i class="fas fa-university"></i> Accounts Ledger ({{ accounts.length }})
+    </button>
+    <button class="admin-tab" [class.active]="activeTab === 'AUDIT'" (click)="activeTab = 'AUDIT'">
+      <i class="fas fa-history"></i> Audit Trail ({{ auditLogs.length }})
+    </button>
+  </div>
+
+  <!-- Tab 1: System Telemetry -->
+  <div *ngIf="activeTab === 'OVERVIEW'" class="overview-section">
+    <div class="card">
+      <h2 class="section-title"><i class="fas fa-server text-primary"></i> System Health & Security Metrics</h2>
+      <div class="system-grid">
+        <div class="health-item">
+          <div class="health-label">Total Transactions Executed</div>
+          <div class="health-value">{{ metrics?.totalTransactions }}</div>
+          <span class="badge badge-success">Atomic & Audited</span>
+        </div>
+        <div class="health-item">
+          <div class="health-label">Registered Customers</div>
+          <div class="health-value">{{ metrics?.totalCustomers }}</div>
+          <span class="badge badge-info">KYC Verified</span>
+        </div>
+        <div class="health-item">
+          <div class="health-label">Investment Portfolio Entries</div>
+          <div class="health-value">{{ metrics?.totalInvestments }}</div>
+          <span class="badge badge-success">Earmarked & Accruing</span>
+        </div>
+        <div class="health-item">
+          <div class="health-label">Database Schema Status</div>
+          <div class="health-value text-success">Healthy / v2.0</div>
+          <span class="badge badge-success">Flyway Migrated</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Users Management -->
+  <div *ngIf="activeTab === 'USERS'" class="card">
+    <h2 class="section-title"><i class="fas fa-users-cog text-primary"></i> Registered Users Directory</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of users">
+            <td>#{{ u.userId }}</td>
+            <td class="font-bold">{{ u.username }}</td>
+            <td>{{ u.name || 'N/A' }}</td>
+            <td>{{ u.email || 'N/A' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-danger': u.role === 'ADMIN',
+                'badge-warning': u.role === 'BANK_STAFF',
+                'badge-info': u.role === 'CUSTOMER'
+              }">
+                {{ u.role }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="u.enabled ? 'badge-success' : 'badge-danger'">
+                {{ u.enabled ? 'ACTIVE' : 'DEACTIVATED' }}
+              </span>
+            </td>
+            <td>
+              <button 
+                class="btn btn-sm" 
+                [ngClass]="u.enabled ? 'btn-danger' : 'btn-outline'"
+                (click)="toggleUserStatus(u)"
+                [disabled]="u.role === 'ADMIN'"
+              >
+                {{ u.enabled ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Account Controls -->
+  <div *ngIf="activeTab === 'ACCOUNTS'" class="card">
+    <h2 class="section-title"><i class="fas fa-university text-primary"></i> Core Bank Accounts Directory</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Account No.</th>
+            <th>Customer ID</th>
+            <th>Type</th>
+            <th>Available Balance</th>
+            <th>Status</th>
+            <th>Change Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of accounts">
+            <td class="font-mono font-bold">{{ acc.accountNo || acc.accountNumber }}</td>
+            <td>#{{ acc.customerId }}</td>
+            <td>{{ acc.accountType }}</td>
+            <td class="font-bold">₹{{ acc.balance | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-success': acc.status === 'ACTIVE',
+                'badge-warning': acc.status === 'FROZEN',
+                'badge-danger': acc.status === 'CLOSED'
+              }">
+                {{ acc.status }}
+              </span>
+            </td>
+            <td>
+              <select class="form-control status-select" [ngModel]="acc.status" (ngModelChange)="changeAccountStatus(acc, $event)">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="FROZEN">FROZEN</option>
+                <option value="CLOSED">CLOSED</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 4: Audit Logs -->
+  <div *ngIf="activeTab === 'AUDIT'" class="card">
+    <h2 class="section-title"><i class="fas fa-history text-primary"></i> Security & Operation Audit Trail</h2>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Action</th>
+            <th>Endpoint</th>
+            <th>Actor</th>
+            <th>IP Address</th>
+            <th>Timestamp</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of auditLogs">
+            <td>#{{ log.auditId }}</td>
+            <td><span class="badge badge-info">{{ log.action }}</span></td>
+            <td>{{ log.endpoint }}</td>
+            <td class="font-semibold">{{ log.username || 'SYSTEM' }}</td>
+            <td>{{ log.ipAddress }}</td>
+            <td>{{ log.timestamp | date:'medium' }}</td>
+            <td class="font-mono text-muted">{{ log.details || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Provision Staff Modal -->
+  <div class="modal-backdrop" *ngIf="showStaffModal" (click)="closeStaffModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">Provision New Bank Staff</h3>
+        <button class="close-btn" (click)="closeStaffModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-control" [(ngModel)]="newStaff.name" placeholder="Staff Full Name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" [(ngModel)]="newStaff.username" placeholder="e.g. staff_priya">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Temporary Password</label>
+          <input type="password" class="form-control" [(ngModel)]="newStaff.password" placeholder="Min 8 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" [(ngModel)]="newStaff.email" placeholder="staff@bankease.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Phone</label>
+          <input type="tel" class="form-control" [(ngModel)]="newStaff.phone" placeholder="+91 9876543210">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="closeStaffModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="createStaffMember()" [disabled]="isCreatingStaff">
+          <i class="fas fa-spinner fa-spin" *ngIf="isCreatingStaff"></i>
+          {{ isCreatingStaff ? 'Creating...' : 'Provision Staff' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

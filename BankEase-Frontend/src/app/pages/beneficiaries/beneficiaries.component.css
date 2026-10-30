@@ -1,0 +1,102 @@
+.beneficiaries-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 4px;
+}
+
+.beneficiaries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.beneficiary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.info h3 {
+  font-size: 1.15rem;
+  margin-bottom: 4px;
+}
+
+.bank-pill {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  background: var(--surface-bg);
+  padding: 12px;
+  border-radius: var(--radius-md);
+}
+
+.meta-row .lbl {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.meta-row .val {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px dashed var(--surface-border);
+}
+
+.empty-state h3 {
+  margin-top: 14px;
+  font-size: 1.25rem;
+}
+
+.btn-block { width: 100%; }
+.mt-4 { margin-top: 16px; }

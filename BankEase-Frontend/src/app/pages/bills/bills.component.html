@@ -1,0 +1,210 @@
+<div class="bills-page">
+  <div class="page-header">
+    <div>
+      <h1>Utility Bill Payments & Recharges</h1>
+      <p class="text-muted">Pay electricity, water, internet, mobile and piped gas bills instantaneously.</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tab-pills">
+      <button (click)="activeTab.set('pay')" [class.active]="activeTab() === 'pay'" class="tab-btn">
+        <i class="fa-solid fa-receipt"></i> Pay New Bill
+      </button>
+      <button (click)="activeTab.set('history')" [class.active]="activeTab() === 'history'" class="tab-btn">
+        <i class="fa-solid fa-clock-rotate-left"></i> Payment History
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB 1: PAY BILL -->
+  <div class="tab-content" *ngIf="activeTab() === 'pay'">
+    <!-- Success Bill Receipt -->
+    <div class="card receipt-card" *ngIf="successBill()">
+      <div class="receipt-header text-center">
+        <div class="success-icon-wrap"><i class="fa-solid fa-circle-check"></i></div>
+        <h2>Payment Successful!</h2>
+        <p class="text-muted">Your utility bill has been processed.</p>
+        <div class="receipt-amount font-mono">₹{{ successBill()?.amount | number:'1.2-2' }}</div>
+      </div>
+
+      <div class="receipt-details">
+        <div class="receipt-row">
+          <span class="lbl">Biller</span>
+          <span class="val">{{ successBill()?.billerName }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Consumer ID</span>
+          <span class="val font-mono">{{ successBill()?.consumerNumber }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Category</span>
+          <span class="val">{{ successBill()?.category }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Reference Number</span>
+          <span class="val font-mono font-bold text-primary-600">{{ successBill()?.referenceNo }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Paid From</span>
+          <span class="val font-mono">{{ successBill()?.accountNo }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="lbl">Date & Time</span>
+          <span class="val text-muted text-xs">{{ successBill()?.createdAt | date:'medium' }}</span>
+        </div>
+      </div>
+
+      <div class="receipt-actions">
+        <button (click)="reset()" class="btn btn-primary btn-block">
+          <i class="fa-solid fa-plus"></i> Pay Another Bill
+        </button>
+      </div>
+    </div>
+
+    <!-- Bill Form -->
+    <div class="card form-card" *ngIf="!successBill()">
+      <!-- Categories Row -->
+      <div class="categories-row">
+        <button type="button"
+                (click)="selectCategory('ELECTRICITY')"
+                [class.cat-active]="selectedCategory() === 'ELECTRICITY'"
+                class="cat-btn">
+          <i class="fa-solid fa-bolt"></i>
+          <span>Electricity</span>
+        </button>
+
+        <button type="button"
+                (click)="selectCategory('WATER')"
+                [class.cat-active]="selectedCategory() === 'WATER'"
+                class="cat-btn">
+          <i class="fa-solid fa-droplet"></i>
+          <span>Water</span>
+        </button>
+
+        <button type="button"
+                (click)="selectCategory('MOBILE_RECHARGE')"
+                [class.cat-active]="selectedCategory() === 'MOBILE_RECHARGE'"
+                class="cat-btn">
+          <i class="fa-solid fa-mobile-screen"></i>
+          <span>Mobile</span>
+        </button>
+
+        <button type="button"
+                (click)="selectCategory('INTERNET')"
+                [class.cat-active]="selectedCategory() === 'INTERNET'"
+                class="cat-btn">
+          <i class="fa-solid fa-wifi"></i>
+          <span>Internet Fiber</span>
+        </button>
+
+        <button type="button"
+                (click)="selectCategory('GAS')"
+                [class.cat-active]="selectedCategory() === 'GAS'"
+                class="cat-btn">
+          <i class="fa-solid fa-fire-flame-simple"></i>
+          <span>Piped Gas</span>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-danger" *ngIf="errorMessage()">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ errorMessage() }}</span>
+      </div>
+
+      <form (ngSubmit)="payBill()" class="bill-form mt-4">
+        <!-- Debited Account -->
+        <div class="form-group">
+          <label class="form-label">Pay From Account *</label>
+          <select [(ngModel)]="accountId" name="accountId" class="form-control form-select" required>
+            <option *ngFor="let acc of accounts()" [value]="acc.accountId">
+              {{ acc.accountType }} - {{ acc.accountNo }} (Available: ₹{{ acc.balance | number:'1.2-2' }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Biller Selection -->
+        <div class="form-group">
+          <label class="form-label">Select Utility Provider / Biller *</label>
+          <select [(ngModel)]="billerName" name="billerName" class="form-control form-select" required>
+            <option *ngFor="let b of categoryBillers[selectedCategory()]" [value]="b">
+              {{ b }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Consumer ID -->
+        <div class="form-group">
+          <label class="form-label" for="consumerNum">Consumer / Account / Meter Number *</label>
+          <input
+            type="text"
+            id="consumerNum"
+            name="consumerNum"
+            [(ngModel)]="consumerNumber"
+            class="form-control font-mono"
+            placeholder="e.g. BES-99887766 or Phone Number"
+            required
+          />
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+          <label class="form-label" for="billAmt">Bill Amount (INR) *</label>
+          <div class="input-currency-wrap">
+            <span class="currency-prefix">₹</span>
+            <input
+              type="number"
+              id="billAmt"
+              name="billAmt"
+              [(ngModel)]="amount"
+              class="form-control currency-input font-mono"
+              placeholder="0.00"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" [disabled]="loading()">
+          <span *ngIf="!loading()"><i class="fa-solid fa-receipt"></i> Pay Bill Now</span>
+          <span *ngIf="loading()"><i class="fa-solid fa-spinner fa-spin"></i> Processing Payment...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB 2: HISTORY -->
+  <div class="tab-content" *ngIf="activeTab() === 'history'">
+    <div class="card">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Category</th>
+              <th>Biller Name</th>
+              <th>Consumer ID</th>
+              <th>Reference No</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bill of history()">
+              <td class="text-xs text-muted">{{ bill.createdAt | date:'medium' }}</td>
+              <td><span class="cat-tag">{{ bill.category }}</span></td>
+              <td class="font-medium">{{ bill.billerName }}</td>
+              <td class="font-mono text-xs">{{ bill.consumerNumber }}</td>
+              <td class="font-mono text-xs text-primary-600 font-bold">{{ bill.referenceNo }}</td>
+              <td class="font-mono font-bold amount-debit">-₹{{ bill.amount | number:'1.2-2' }}</td>
+              <td><span class="badge badge-paid">{{ bill.status }}</span></td>
+            </tr>
+            <tr *ngIf="!history().length">
+              <td colspan="7" class="text-center py-8 text-muted">No bill payments recorded yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

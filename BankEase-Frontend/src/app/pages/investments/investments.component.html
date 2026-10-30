@@ -1,0 +1,179 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Investment Services</h1>
+      <p class="page-subtitle">Grow your wealth with high-yield fixed deposits, mutual funds, and retirement schemes.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openInvestModal()">
+      <i class="fas fa-plus-circle"></i> Start New Investment
+    </button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Investment Plans Cards -->
+  <div class="plans-grid">
+    <div class="plan-card" *ngFor="let plan of plans">
+      <div class="plan-badge">{{ plan.riskLevel }}</div>
+      <div class="plan-icon">
+        <i class="fas fa-chart-line" *ngIf="plan.type === 'MUTUAL_FUNDS'"></i>
+        <i class="fas fa-shield-alt" *ngIf="plan.type === 'FIXED_DEPOSIT'"></i>
+        <i class="fas fa-piggy-bank" *ngIf="plan.type === 'RECURRING_DEPOSIT'"></i>
+        <i class="fas fa-umbrella" *ngIf="plan.type === 'NATIONAL_PENSION_SCHEME'"></i>
+      </div>
+      <h3 class="plan-name">{{ plan.name }}</h3>
+      <p class="plan-desc">{{ plan.description }}</p>
+      <div class="plan-rate-box">
+        <span class="rate-value">{{ plan.returnRate }}%</span>
+        <span class="rate-label">Expected Annual Return</span>
+      </div>
+      <div class="plan-details">
+        <span>Min. Investment:</span>
+        <strong>₹{{ plan.minAmount | number }}</strong>
+      </div>
+      <button class="btn btn-outline" style="width: 100%; margin-top: 16px;" (click)="openInvestModal(plan)">
+        Invest in this Plan
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive ROI Calculator -->
+  <div class="card roi-card">
+    <h2 class="section-title"><i class="fas fa-calculator text-primary"></i> Investment Yield Calculator</h2>
+    <div class="calc-grid">
+      <div class="calc-inputs">
+        <div class="form-group">
+          <label class="form-label">Principal Amount: ₹{{ calcAmount | number }}</label>
+          <input type="range" class="range-slider" min="5000" max="2000000" step="5000" [(ngModel)]="calcAmount" (input)="computeReturns()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Investment Period: {{ calcTenure }} Months ({{ (calcTenure/12).toFixed(1) }} Years)</label>
+          <input type="range" class="range-slider" min="6" max="120" step="6" [(ngModel)]="calcTenure" (input)="computeReturns()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Annual Return Rate: {{ calcRate }}%</label>
+          <input type="range" class="range-slider" min="4" max="18" step="0.25" [(ngModel)]="calcRate" (input)="computeReturns()">
+        </div>
+      </div>
+
+      <div class="calc-results">
+        <div class="result-tile">
+          <div class="result-label">Invested Capital</div>
+          <div class="result-value">₹{{ calcAmount | number }}</div>
+        </div>
+        <div class="result-tile">
+          <div class="result-label">Estimated Wealth Gain</div>
+          <div class="result-value highlight">₹{{ calculatedInterest | number }}</div>
+        </div>
+        <div class="result-tile total">
+          <div class="result-label">Total Maturity Value</div>
+          <div class="result-value grand">₹{{ calculatedMaturity | number }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Investment Portfolio Table -->
+  <div class="card">
+    <h2 class="section-title"><i class="fas fa-briefcase text-primary"></i> Your Investment Portfolio</h2>
+    <div *ngIf="isLoading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i> Loading your portfolio...
+    </div>
+
+    <div *ngIf="!isLoading && investments.length === 0" class="empty-state">
+      <i class="fas fa-folder-open"></i>
+      <h3>No Investments Found</h3>
+      <p>You have not placed any investment orders yet. Start growing your savings today!</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!isLoading && investments.length > 0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Tenure</th>
+            <th>Est. Rate</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of investments">
+            <td>#{{ inv.investmentId }}</td>
+            <td class="font-medium">{{ formatType(inv.investmentType) }}</td>
+            <td class="font-bold">₹{{ inv.amount | number:'1.2-2' }}</td>
+            <td>{{ inv.tenureMonths }} Months</td>
+            <td><span class="text-success font-semibold">{{ inv.expectedReturnRate }}% p.a.</span></td>
+            <td>{{ inv.createdAt | date:'mediumDate' }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'badge-success': inv.status === 'ACTIVE' || inv.status === 'COMPLETED',
+                'badge-warning': inv.status === 'REQUESTED',
+                'badge-danger': inv.status === 'CANCELLED'
+              }">
+                {{ inv.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Apply Modal -->
+  <div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title">New Investment Application</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Investment Type</label>
+          <select class="form-control" [(ngModel)]="newInvestment.investmentType" (change)="onPlanChange()">
+            <option value="FIXED_DEPOSIT">Fixed Deposit (FD)</option>
+            <option value="RECURRING_DEPOSIT">Recurring Deposit (RD)</option>
+            <option value="MUTUAL_FUNDS">Mutual Funds (Equity)</option>
+            <option value="NATIONAL_PENSION_SCHEME">National Pension Scheme (NPS)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Amount (INR)</label>
+          <input type="number" class="form-control" [(ngModel)]="newInvestment.amount" min="1000" step="1000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tenure (Months)</label>
+          <select class="form-control" [(ngModel)]="newInvestment.tenureMonths">
+            <option [value]="6">6 Months</option>
+            <option [value]="12">12 Months (1 Year)</option>
+            <option [value]="24">24 Months (2 Years)</option>
+            <option [value]="36">36 Months (3 Years)</option>
+            <option [value]="60">60 Months (5 Years)</option>
+            <option [value]="120">120 Months (10 Years)</option>
+          </select>
+        </div>
+
+        <div class="notice-box">
+          <i class="fas fa-info-circle"></i> Funds will be earmarked from your primary savings account once verified by bank staff.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="submitInvestment()" [disabled]="isSubmitting">
+          <i class="fas fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+          {{ isSubmitting ? 'Submitting...' : 'Confirm & Invest' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
