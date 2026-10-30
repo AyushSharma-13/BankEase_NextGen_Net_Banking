@@ -14,3 +14,4 @@ public interface NotificationService {
     void markAsRead(Long notificationId, Long customerId);
     void markAllAsRead(Long customerId);
 }
+

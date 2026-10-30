@@ -138,3 +138,4 @@ class FundTransferServiceTest {
         assertEquals(0, BigDecimal.valueOf(10000.00).compareTo(unchangedA.getBalance()));
     }
 }
+

@@ -15,3 +15,4 @@ public interface TransactionService {
     TransactionDto getTransactionByReference(Long customerId, String referenceNo);
     byte[] generateAccountStatement(Long customerId, Long accountId, LocalDateTime from, LocalDateTime to);
 }
+

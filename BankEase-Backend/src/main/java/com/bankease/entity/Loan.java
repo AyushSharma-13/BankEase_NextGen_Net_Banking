@@ -64,3 +64,4 @@ public class Loan {
         updatedAt = LocalDateTime.now();
     }
 }
+

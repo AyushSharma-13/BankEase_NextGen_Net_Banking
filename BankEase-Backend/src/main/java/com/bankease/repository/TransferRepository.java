@@ -15,3 +15,4 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     Page<Transfer> findBySourceAccountCustomerCustomerIdOrderByCreatedAtDesc(Long customerId, Pageable pageable);
     Optional<Transfer> findByReferenceNo(String referenceNo);
 }
+

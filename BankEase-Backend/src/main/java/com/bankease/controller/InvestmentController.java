@@ -47,3 +47,4 @@ public class InvestmentController {
         return ResponseEntity.ok(ApiResponse.success(inv));
     }
 }
+

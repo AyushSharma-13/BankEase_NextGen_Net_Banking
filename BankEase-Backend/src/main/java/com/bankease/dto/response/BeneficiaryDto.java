@@ -21,3 +21,4 @@ public class BeneficiaryDto {
     private String status;
     private LocalDateTime createdAt;
 }
+

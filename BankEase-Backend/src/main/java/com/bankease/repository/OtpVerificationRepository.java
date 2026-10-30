@@ -13,3 +13,4 @@ public interface OtpVerificationRepository extends JpaRepository<OtpVerification
     Optional<OtpVerification> findTopByUserUserIdAndOtpCodeAndPurposeAndVerifiedFalseAndExpiresAtAfter(
             Long userId, String otpCode, String purpose, LocalDateTime now);
 }
+

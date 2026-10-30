@@ -15,3 +15,4 @@ public interface InvestmentRepository extends JpaRepository<Investment, Long> {
     List<Investment> findAllByOrderByCreatedAtDesc();
     Page<Investment> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
+

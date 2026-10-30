@@ -26,3 +26,4 @@ public class InvestmentRequest {
     @Max(value = 120, message = "Maximum tenure is 120 months")
     private Integer tenureMonths;
 }
+

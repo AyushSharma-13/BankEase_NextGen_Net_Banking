@@ -13,3 +13,4 @@ public interface BeneficiaryService {
     void deleteBeneficiary(Long customerId, Long beneficiaryId);
     boolean validateAccount(String accountNo);
 }
+

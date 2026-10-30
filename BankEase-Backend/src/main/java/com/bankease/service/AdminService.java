@@ -16,3 +16,4 @@ public interface AdminService {
     Page<TransactionDto> getAllTransactions(Pageable pageable);
     UserDto createStaffUser(String username, String password, String name, String email, String phone);
 }
+

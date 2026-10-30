@@ -19,3 +19,4 @@ public class NotificationDto {
     private Boolean isRead;
     private LocalDateTime createdAt;
 }
+

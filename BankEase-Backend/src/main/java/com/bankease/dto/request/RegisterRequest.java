@@ -44,3 +44,4 @@ public class RegisterRequest {
     @Builder.Default
     private BigDecimal initialDeposit = BigDecimal.valueOf(1000.00);
 }
+

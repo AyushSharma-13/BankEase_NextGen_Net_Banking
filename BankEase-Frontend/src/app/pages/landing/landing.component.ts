@@ -10,3 +10,4 @@ import { RouterModule } from '@angular/router';
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {}
+

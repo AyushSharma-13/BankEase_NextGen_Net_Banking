@@ -24,3 +24,4 @@ public class BillPaymentDto {
     private String referenceNo;
     private LocalDateTime createdAt;
 }
+

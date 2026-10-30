@@ -70,3 +70,4 @@ volumes:
 networks:
   bankease-network:
     driver: bridge
+

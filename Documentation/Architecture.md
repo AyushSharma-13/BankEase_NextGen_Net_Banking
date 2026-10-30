@@ -86,3 +86,4 @@ The Angular application uses standalone components and services:
 - **`AuthGuard` & `RoleGuard`**: Protects routes on the client side according to user roles.
 - **`JwtInterceptor`**: Injects `Authorization: Bearer <token>` to all HTTP requests and handles HTTP 401/403 redirects.
 - **State Management**: Reactive signals and RxJS BehaviorSubjects retain active user session, notifications unread counts, and active account selection.
+

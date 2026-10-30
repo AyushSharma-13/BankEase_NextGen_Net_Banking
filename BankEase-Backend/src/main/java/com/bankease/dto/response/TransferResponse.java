@@ -22,3 +22,4 @@ public class TransferResponse {
     private String remarks;
     private LocalDateTime timestamp;
 }
+

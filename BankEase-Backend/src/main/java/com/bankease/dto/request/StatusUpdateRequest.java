@@ -15,3 +15,4 @@ public class StatusUpdateRequest {
     private String status;
     private String remarks;
 }
+

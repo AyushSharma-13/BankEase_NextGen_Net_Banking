@@ -13,3 +13,4 @@ class BankEaseApplicationTests {
         // Confirms Spring application context boots cleanly
     }
 }
+

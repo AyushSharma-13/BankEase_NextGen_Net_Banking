@@ -17,3 +17,4 @@ export interface AuditLog {
   details: string;
   timestamp: string;
 }
+

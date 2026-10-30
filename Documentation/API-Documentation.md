@@ -154,3 +154,4 @@ All API endpoints return a standardized envelope structure:
 | `PATCH`| `/api/admin/accounts/{id}/status`| Admin | Set account status (`ACTIVE`, `FROZEN`, `CLOSED`) |
 | `GET` | `/api/admin/audit-logs` | Admin | Inspect full system audit log |
 | `POST` | `/api/admin/staff` | Admin | Create bank employee account |
+

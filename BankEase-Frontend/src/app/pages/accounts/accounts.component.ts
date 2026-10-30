@@ -79,3 +79,4 @@ export class AccountsComponent implements OnInit {
     setTimeout(() => this.copiedAccount.set(false), 2000);
   }
 }
+

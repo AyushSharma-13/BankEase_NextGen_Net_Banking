@@ -57,3 +57,4 @@ INSERT INTO notifications (notification_id, customer_id, title, message, type, i
 (2, 1, 'Transfer Completed', 'Rs. 15,000.00 successfully transferred to Priya Patel. Ref: TRF-BEAS-20260221-001', 'TRANSACTION', TRUE, CURRENT_TIMESTAMP),
 (3, 1, 'Loan Application Submitted', 'Your Home Loan application for Rs. 35,00,000.00 is currently under review.', 'LOAN', FALSE, CURRENT_TIMESTAMP),
 (4, 1, 'Bill Payment Successful', 'Electricity bill of Rs. 3,250.00 paid to BESCOM Bangalore. Ref: BILL-BEAS-20260228-001', 'TRANSACTION', FALSE, CURRENT_TIMESTAMP);
+

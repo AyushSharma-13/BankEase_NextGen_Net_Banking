@@ -168,3 +168,4 @@
 @media (max-width: 640px) {
   .categories-row { grid-template-columns: repeat(3, 1fr); }
 }
+

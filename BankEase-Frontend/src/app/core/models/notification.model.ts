@@ -6,3 +6,4 @@ export interface Notification {
   isRead: boolean;
   createdAt: string;
 }
+

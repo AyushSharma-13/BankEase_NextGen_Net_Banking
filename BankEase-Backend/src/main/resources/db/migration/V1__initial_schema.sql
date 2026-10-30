@@ -153,3 +153,4 @@ CREATE TABLE IF NOT EXISTS idempotency_records (
     response_payload LONGTEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+

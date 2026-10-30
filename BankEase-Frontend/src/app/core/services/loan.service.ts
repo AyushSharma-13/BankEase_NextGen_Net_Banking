@@ -39,3 +39,4 @@ export class LoanService {
     return this.http.patch<ApiResponse<Loan>>(`${this.staffUrl}/${loanId}/status`, { status, remarks });
   }
 }
+

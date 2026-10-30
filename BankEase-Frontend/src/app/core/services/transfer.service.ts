@@ -29,3 +29,4 @@ export class TransferService {
     return this.http.get<ApiResponse<PageResponse<TransferResponse>>>(`${this.baseUrl}?page=${page}&size=${size}`);
   }
 }
+

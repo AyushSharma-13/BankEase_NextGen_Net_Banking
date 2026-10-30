@@ -10,3 +10,4 @@ public interface AuditService {
     void log(String action, String endpoint, String details);
     Page<AuditLogDto> getAllLogs(Pageable pageable);
 }
+

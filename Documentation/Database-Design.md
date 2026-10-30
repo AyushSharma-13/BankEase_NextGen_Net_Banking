@@ -68,3 +68,4 @@ The BankEase database (`bankease_db`) is normalized to 3rd Normal Form (3NF) to 
 | `otp_verifications` | `otp_id` | `user_id` | Time-bounded simulated OTP verification |
 | `audit_logs` | `audit_id` | `user_id` | Operational audit trail |
 | `idempotency_records`| `idempotency_key` | - | Protection against duplicate transaction submission |
+

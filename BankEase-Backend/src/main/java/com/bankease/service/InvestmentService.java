@@ -19,3 +19,4 @@ public interface InvestmentService {
     InvestmentDto updateInvestmentStatus(Long investmentId, StatusUpdateRequest request);
     List<Map<String, Object>> getInvestmentPlans();
 }
+

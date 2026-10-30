@@ -17,3 +17,4 @@ public class OtpVerifyRequest {
     @NotBlank(message = "Purpose is required")
     private String purpose;
 }
+

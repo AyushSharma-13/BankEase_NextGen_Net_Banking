@@ -11,3 +11,4 @@ public interface AccountService {
     AccountDto getAccountByAccountNo(String accountNo);
     DashboardOverviewDto getDashboardOverview(Long customerId);
 }
+

@@ -47,3 +47,4 @@ public class LoanController {
         return ResponseEntity.ok(ApiResponse.success(loan));
     }
 }
+

@@ -47,3 +47,4 @@ public class BillPaymentController {
         return ResponseEntity.ok(ApiResponse.success(bill));
     }
 }
+

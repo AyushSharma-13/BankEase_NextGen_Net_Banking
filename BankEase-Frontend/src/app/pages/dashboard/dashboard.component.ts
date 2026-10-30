@@ -45,3 +45,4 @@ export class DashboardComponent implements OnInit {
     setTimeout(() => this.copiedAccount.set(false), 2000);
   }
 }
+

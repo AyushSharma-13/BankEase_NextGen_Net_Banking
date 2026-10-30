@@ -27,3 +27,4 @@ public class BeneficiaryRequest {
     @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "Please provide a valid 11-character IFSC code (e.g. BEAS0001001)")
     private String ifscCode;
 }
+

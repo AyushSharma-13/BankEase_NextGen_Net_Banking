@@ -110,3 +110,4 @@ The server starts at `http://localhost:8080`.
 | `PATCH` | `/api/staff/loans/{id}/status` | Staff/Admin | Approve or reject loan |
 | `GET` | `/api/admin/metrics` | Admin | System metrics & banking reserves |
 | `GET` | `/api/admin/audit-logs` | Admin | Review security audit logs |
+

@@ -12,3 +12,4 @@ public interface AuthService {
     UserDto getCurrentUserProfile();
     void changePassword(ChangePasswordRequest request);
 }
+

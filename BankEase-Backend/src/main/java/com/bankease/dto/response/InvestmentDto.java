@@ -24,3 +24,4 @@ public class InvestmentDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+

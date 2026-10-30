@@ -131,3 +131,4 @@ export class StaffComponent implements OnInit {
     return type ? type.replace(/_/g, ' ') : '';
   }
 }
+

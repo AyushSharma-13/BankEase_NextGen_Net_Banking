@@ -29,3 +29,4 @@ export interface LoanTypeInfo {
   maxTenureMonths: number;
   description: string;
 }
+

@@ -29,3 +29,4 @@ export class BillService {
     return this.http.get<ApiResponse<BillPayment>>(`${this.baseUrl}/${id}`);
   }
 }
+

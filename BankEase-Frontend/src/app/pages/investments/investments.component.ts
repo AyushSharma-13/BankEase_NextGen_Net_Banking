@@ -140,3 +140,4 @@ export class InvestmentsComponent implements OnInit {
     return type ? type.replace(/_/g, ' ') : '';
   }
 }
+

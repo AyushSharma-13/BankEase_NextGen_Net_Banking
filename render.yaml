@@ -38,3 +38,4 @@ databases:
     databaseName: bankease_db
     user: bankease
     plan: standard
+

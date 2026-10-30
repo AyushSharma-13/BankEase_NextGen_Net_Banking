@@ -62,3 +62,4 @@ public class BeneficiaryController {
         return ResponseEntity.ok(ApiResponse.success(isValid));
     }
 }
+

@@ -70,3 +70,4 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Staff user created successfully", staff));
     }
 }
+

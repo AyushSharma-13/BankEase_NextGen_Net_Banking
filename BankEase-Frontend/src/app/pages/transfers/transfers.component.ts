@@ -191,3 +191,4 @@ export class TransfersComponent implements OnInit {
     this.selectedBeneficiaryId = null;
   }
 }
+

@@ -5,3 +5,4 @@ public enum Role {
     BANK_STAFF,
     ADMIN
 }
+

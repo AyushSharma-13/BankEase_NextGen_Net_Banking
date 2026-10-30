@@ -68,3 +68,4 @@ jobs:
         with:
           name: bankease-frontend-dist
           path: BankEase-Frontend/dist/
+

@@ -23,3 +23,4 @@ public class DashboardOverviewDto {
     private long activeLoansCount;
     private long activeInvestmentsCount;
 }
+

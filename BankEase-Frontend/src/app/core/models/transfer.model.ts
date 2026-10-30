@@ -18,3 +18,4 @@ export interface TransferResponse {
   remarks?: string;
   timestamp: string;
 }
+

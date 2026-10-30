@@ -37,3 +37,4 @@ export class BeneficiaryService {
     return this.http.get<ApiResponse<boolean>>(`${this.baseUrl}/validate/${accountNo}`);
   }
 }
+

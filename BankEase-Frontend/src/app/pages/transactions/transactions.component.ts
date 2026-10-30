@@ -70,3 +70,4 @@ export class TransactionsComponent implements OnInit {
     this.selectedTxn.set(txn);
   }
 }
+

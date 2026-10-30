@@ -51,3 +51,4 @@ public class StaffController {
         return ResponseEntity.ok(ApiResponse.success("Investment status updated successfully", updated));
     }
 }
+

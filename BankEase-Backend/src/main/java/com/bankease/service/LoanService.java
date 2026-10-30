@@ -19,3 +19,4 @@ public interface LoanService {
     LoanDto updateLoanStatus(Long loanId, StatusUpdateRequest request);
     List<Map<String, Object>> getLoanTypes();
 }
+

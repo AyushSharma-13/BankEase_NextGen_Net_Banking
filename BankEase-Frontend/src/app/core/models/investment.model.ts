@@ -25,3 +25,4 @@ export interface InvestmentPlanInfo {
   riskLevel: string;
   description: string;
 }
+

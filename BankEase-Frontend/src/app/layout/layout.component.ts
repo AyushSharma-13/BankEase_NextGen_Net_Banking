@@ -46,3 +46,4 @@ export class LayoutComponent implements OnInit {
     this.authService.logout();
   }
 }
+

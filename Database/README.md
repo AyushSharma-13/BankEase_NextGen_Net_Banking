@@ -28,3 +28,4 @@ mysql -u root -p < sample-data.sql
 
 ### 2. Automatic Setup with Spring Boot
 The Spring Boot backend utilizes Flyway migrations (`V1__initial_schema.sql` and `V2__seed_data.sql`) along with a startup `DataInitializer` to automatically create tables, insert seeds, and securely hash passwords upon startup.
+

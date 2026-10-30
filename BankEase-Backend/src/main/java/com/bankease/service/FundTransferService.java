@@ -14,3 +14,4 @@ public interface FundTransferService {
     List<TransferResponse> getTransferHistory(Long customerId);
     Page<TransferResponse> getTransferHistory(Long customerId, Pageable pageable);
 }
+

@@ -18,3 +18,4 @@ export interface BillPaymentRequest {
   consumerNumber: string;
   amount: number;
 }
+

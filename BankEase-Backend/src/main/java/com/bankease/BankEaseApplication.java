@@ -10,3 +10,4 @@ public class BankEaseApplication {
         SpringApplication.run(BankEaseApplication.class, args);
     }
 }
+

@@ -14,3 +14,4 @@ public interface BillPaymentService {
     Page<BillPaymentDto> getBillHistory(Long customerId, Pageable pageable);
     List<String> getSupportedCategories();
 }
+

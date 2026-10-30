@@ -92,3 +92,4 @@ class AuthServiceTest {
         assertEquals("kavitajoshi", loginRes.getUsername());
     }
 }
+

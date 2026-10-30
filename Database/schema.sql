@@ -182,3 +182,4 @@ CREATE INDEX idx_transactions_account_id ON transactions(account_id);
 CREATE INDEX idx_transactions_reference ON transactions(reference_no);
 CREATE INDEX idx_transfers_reference ON transfers(reference_no);
 CREATE INDEX idx_notifications_customer ON notifications(customer_id, is_read);
+

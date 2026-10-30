@@ -30,3 +30,4 @@ public class BillPaymentRequest {
     @DecimalMin(value = "1.00", message = "Minimum payment amount is 1.00")
     private BigDecimal amount;
 }
+

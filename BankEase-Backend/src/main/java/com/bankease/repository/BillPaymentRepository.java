@@ -15,3 +15,4 @@ public interface BillPaymentRepository extends JpaRepository<BillPayment, Long> 
     Page<BillPayment> findByCustomerCustomerIdOrderByCreatedAtDesc(Long customerId, Pageable pageable);
     Optional<BillPayment> findByReferenceNo(String referenceNo);
 }
+

@@ -39,3 +39,4 @@ export class InvestmentService {
     return this.http.patch<ApiResponse<Investment>>(`${this.staffUrl}/${id}/status`, { status, remarks });
   }
 }
+
