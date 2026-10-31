@@ -4,8 +4,8 @@
   "outputDirectory": "BankEase-Frontend/dist/BankEase-Frontend/browser",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "source": "/api/:path*",
+      "destination": "https://bankease-backend.onrender.com/api/:path*"
     },
     {
       "source": "/((?!api/.*).*)",
