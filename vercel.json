@@ -8,7 +8,11 @@
       "destination": "https://bankease-backend.onrender.com/api/:path*"
     },
     {
-      "source": "/((?!api/.*).*)",
+      "source": "/actuator/:path*",
+      "destination": "https://bankease-backend.onrender.com/actuator/:path*"
+    },
+    {
+      "source": "/((?!api/|actuator/).*)",
       "destination": "/index.html"
     }
   ]

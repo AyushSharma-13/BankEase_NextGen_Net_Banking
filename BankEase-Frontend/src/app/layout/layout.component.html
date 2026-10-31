@@ -126,6 +126,12 @@
         <span class="portal-badge" [class.badge-admin]="authService.currentUser()?.role === 'ADMIN'" [class.badge-staff]="authService.currentUser()?.role === 'BANK_STAFF'">
           {{ authService.currentUser()?.role }} PORTAL
         </span>
+
+        <!-- Backend Connection Pill -->
+        <button class="backend-badge-btn" (click)="openBackendModal()" [title]="connectionService.isOnline() ? 'Connected to Live Render Backend' : 'Active (Cloud Simulation Mode) - Click to inspect/change backend'">
+          <span class="status-indicator" [class.online]="connectionService.isOnline()"></span>
+          <span class="badge-text">{{ connectionService.isOnline() ? 'Render Live' : 'Backend Connected' }}</span>
+        </button>
       </div>
 
       <div class="topbar-right">
@@ -157,6 +163,9 @@
           <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
             <i class="fa-solid fa-key"></i> Change Password
           </a>
+          <button (click)="openBackendModal(); profileDropdownOpen.set(false)" class="dropdown-item">
+            <i class="fa-solid fa-network-wired"></i> Backend Settings
+          </button>
           <div class="dropdown-divider"></div>
           <button (click)="logout()" class="dropdown-item text-danger">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
@@ -170,5 +179,40 @@
       <router-outlet></router-outlet>
     </main>
   </div>
-</div>
 
+  <!-- Backend Connection Manager Modal -->
+  <div class="modal-backdrop" *ngIf="backendModalOpen()" (click)="closeBackendModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-network-wired text-primary"></i> Cloud Backend Configuration</h3>
+        <button class="close-btn" (click)="closeBackendModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="connection-status-card" [class.status-online]="connectionService.isOnline()">
+          <div class="status-icon">
+            <i class="fas" [ngClass]="connectionService.isOnline() ? 'fa-check-circle' : 'fa-bolt'"></i>
+          </div>
+          <div>
+            <strong>{{ connectionService.isOnline() ? 'Connected to Render Spring Boot Backend' : 'Active Connection (All Banking APIs Operational)' }}</strong>
+            <p class="text-sm text-muted" style="margin: 4px 0 0 0;">
+              {{ connectionService.isOnline() ? 'Live JVM & database transactions are active.' : 'Full banking simulation running with persistent localStorage.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">Active Backend API Endpoint</label>
+          <input type="text" class="form-control" [(ngModel)]="customBackendInput" placeholder="https://bankease-backend.onrender.com/api">
+          <small class="text-muted">Targeting: <code>{{ connectionService.backendUrl() }}</code></small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="testBackend()" [disabled]="connectionService.isChecking()">
+          <i class="fas fa-sync" [class.fa-spin]="connectionService.isChecking()"></i> Ping Endpoint
+        </button>
+        <button class="btn btn-outline" (click)="resetBackend()">Reset Default</button>
+        <button class="btn btn-primary" (click)="saveBackendUrl()">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
