@@ -1,0 +1,10 @@
+{
+  "name": "bankease-nextgen-net-banking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BankEase - NextGen Net Banking Platform",
+  "scripts": {
+    "build": "cd BankEase-Frontend && npm install && npm run build",
+    "start": "cd BankEase-Frontend && npm start"
+  }
+}

@@ -101,6 +101,27 @@
         </a>
       </ng-container>
 
+      <!-- Quick Role / Portal Switcher in Sidebar -->
+      <div class="nav-section-title" *ngIf="sidebarOpen()">SWITCH PORTALS</div>
+
+      <button type="button" (click)="authService.switchRole('CUSTOMER')" class="nav-item portal-switch-btn" [class.active-portal]="authService.currentUser()?.role === 'CUSTOMER'" title="Open Customer NetBanking Portal">
+        <i class="fa-solid fa-user nav-icon text-primary-400"></i>
+        <span class="nav-text" *ngIf="sidebarOpen()">Customer Portal</span>
+        <span class="role-badge-pill role-customer" *ngIf="sidebarOpen()">Client</span>
+      </button>
+
+      <button type="button" (click)="authService.switchRole('BANK_STAFF')" class="nav-item portal-switch-btn" [class.active-portal]="authService.currentUser()?.role === 'BANK_STAFF'" title="Open Bank Staff Operations Portal">
+        <i class="fa-solid fa-user-tie nav-icon text-amber-400"></i>
+        <span class="nav-text" *ngIf="sidebarOpen()">Staff Portal</span>
+        <span class="role-badge-pill role-staff" *ngIf="sidebarOpen()">Staff</span>
+      </button>
+
+      <button type="button" (click)="authService.switchRole('ADMIN')" class="nav-item portal-switch-btn" [class.active-portal]="authService.currentUser()?.role === 'ADMIN'" title="Open Administrator Command Portal">
+        <i class="fa-solid fa-shield-halved nav-icon text-rose-400"></i>
+        <span class="nav-text" *ngIf="sidebarOpen()">Admin Command</span>
+        <span class="role-badge-pill role-admin" *ngIf="sidebarOpen()">Admin</span>
+      </button>
+
       <div class="nav-section-title" *ngIf="sidebarOpen()">ACCOUNT SETTINGS</div>
 
       <a routerLink="/profile" routerLinkActive="active" class="nav-item">
@@ -123,9 +144,35 @@
         <button (click)="toggleSidebar()" class="btn-icon" title="Toggle Navigation">
           <i class="fa-solid fa-bars"></i>
         </button>
+
         <span class="portal-badge" [class.badge-admin]="authService.currentUser()?.role === 'ADMIN'" [class.badge-staff]="authService.currentUser()?.role === 'BANK_STAFF'">
           {{ authService.currentUser()?.role }} PORTAL
         </span>
+
+        <!-- Portal Switcher Segmented Control in Top Header -->
+        <div class="portal-segmented-control">
+          <button type="button" 
+                  (click)="authService.switchRole('CUSTOMER')" 
+                  class="segment-btn" 
+                  [class.active]="authService.currentUser()?.role === 'CUSTOMER'"
+                  title="Switch to Customer NetBanking">
+            <i class="fa-solid fa-user"></i> <span>Customer</span>
+          </button>
+          <button type="button" 
+                  (click)="authService.switchRole('BANK_STAFF')" 
+                  class="segment-btn" 
+                  [class.active]="authService.currentUser()?.role === 'BANK_STAFF'"
+                  title="Switch to Bank Staff Operations">
+            <i class="fa-solid fa-user-tie"></i> <span>Staff</span>
+          </button>
+          <button type="button" 
+                  (click)="authService.switchRole('ADMIN')" 
+                  class="segment-btn" 
+                  [class.active]="authService.currentUser()?.role === 'ADMIN'"
+                  title="Switch to System Admin Command">
+            <i class="fa-solid fa-shield-halved"></i> <span>Admin</span>
+          </button>
+        </div>
 
         <!-- Backend Connection Pill -->
         <button class="backend-badge-btn" (click)="openBackendModal()" [title]="connectionService.isOnline() ? 'Connected to Live Render Backend' : 'Active (Cloud Simulation Mode) - Click to inspect/change backend'">
@@ -143,38 +190,44 @@
           </span>
         </a>
 
-        <!-- User Profile Pill -->
-        <div class="user-pill" (click)="toggleProfile()">
-          <div class="user-avatar">
-            {{ authService.currentUser()?.customerName?.charAt(0) || 'U' }}
-          </div>
-          <div class="user-meta">
-            <span class="user-name">{{ authService.currentUser()?.customerName }}</span>
-            <span class="user-handle">&#64;{{ authService.currentUser()?.username }}</span>
-          </div>
-          <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
-        </div>
+        <!-- Profile Menu Dropdown -->
+        <div class="profile-dropdown-wrapper">
+          <button (click)="toggleProfileDropdown()" class="profile-btn">
+            <div class="avatar-circle">
+              {{ authService.currentUser()?.customerName?.charAt(0) || 'U' }}
+            </div>
+            <div class="profile-meta">
+              <span class="profile-name">{{ authService.currentUser()?.customerName || authService.currentUser()?.username }}</span>
+              <span class="profile-role">{{ authService.currentUser()?.role }}</span>
+            </div>
+            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+          </button>
 
-        <!-- Profile Dropdown -->
-        <div class="dropdown-menu" *ngIf="profileDropdownOpen()">
-          <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
-            <i class="fa-solid fa-id-card"></i> View Profile
-          </a>
-          <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
-            <i class="fa-solid fa-key"></i> Change Password
-          </a>
-          <button (click)="openBackendModal(); profileDropdownOpen.set(false)" class="dropdown-item">
-            <i class="fa-solid fa-network-wired"></i> Backend Settings
-          </button>
-          <div class="dropdown-divider"></div>
-          <button (click)="logout()" class="dropdown-item text-danger">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
-          </button>
+          <div class="dropdown-menu" *ngIf="profileDropdownOpen()">
+            <div class="dropdown-header">
+              <p class="user-greeting">Signed in as</p>
+              <p class="user-email font-bold">{{ authService.currentUser()?.email }}</p>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
+              <i class="fa-solid fa-user"></i> My Profile
+            </a>
+            <a routerLink="/profile" class="dropdown-item" (click)="profileDropdownOpen.set(false)">
+              <i class="fa-solid fa-key"></i> Change Password
+            </a>
+            <button (click)="openBackendModal(); profileDropdownOpen.set(false)" class="dropdown-item">
+              <i class="fa-solid fa-network-wired"></i> Backend Settings
+            </button>
+            <div class="dropdown-divider"></div>
+            <button (click)="logout()" class="dropdown-item text-danger">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Page Content -->
+    <!-- Main Router Outlet -->
     <main class="page-content">
       <router-outlet></router-outlet>
     </main>

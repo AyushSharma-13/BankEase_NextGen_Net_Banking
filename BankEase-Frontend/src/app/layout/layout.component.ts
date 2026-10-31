@@ -48,6 +48,10 @@ export class LayoutComponent implements OnInit {
     this.notificationsDropdownOpen.set(false);
   }
 
+  toggleProfileDropdown(): void {
+    this.toggleProfile();
+  }
+
   openBackendModal(): void {
     this.customBackendInput = this.connectionService.backendUrl();
     this.backendModalOpen.set(true);

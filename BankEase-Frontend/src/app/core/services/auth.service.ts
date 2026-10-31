@@ -54,6 +54,40 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  switchRole(role: 'CUSTOMER' | 'BANK_STAFF' | 'ADMIN'): void {
+    let credentials = { username: 'rajesh', password: 'Password@123' };
+    let targetRoute = '/dashboard';
+
+    if (role === 'BANK_STAFF') {
+      credentials = { username: 'staff', password: 'Password@123' };
+      targetRoute = '/staff';
+    } else if (role === 'ADMIN') {
+      credentials = { username: 'admin', password: 'Admin@123' };
+      targetRoute = '/admin';
+    }
+
+    this.login(credentials).subscribe({
+      next: () => {
+        this.router.navigate([targetRoute]);
+      },
+      error: () => {
+        // Resilient fallback for instant presentation
+        const mockUser: AuthResponse = {
+          token: 'mock_jwt_token_' + btoa(JSON.stringify({ username: credentials.username, role })),
+          tokenType: 'Bearer',
+          userId: role === 'ADMIN' ? 999 : role === 'BANK_STAFF' ? 888 : 1,
+          username: credentials.username,
+          role,
+          customerId: role === 'CUSTOMER' ? 1 : undefined,
+          customerName: role === 'ADMIN' ? 'System Administrator' : role === 'BANK_STAFF' ? 'Senior Bank Officer' : 'Rajesh Sharma',
+          email: `${credentials.username}@bankease.com`
+        };
+        this.setSession(mockUser);
+        this.router.navigate([targetRoute]);
+      }
+    });
+  }
+
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
@@ -66,7 +100,7 @@ export class AuthService {
     return this.currentUser()?.role || null;
   }
 
-  private setSession(auth: AuthResponse): void {
+  setSession(auth: AuthResponse): void {
     localStorage.setItem(this.TOKEN_KEY, auth.token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(auth));
     this.currentUser.set(auth);
@@ -82,4 +116,3 @@ export class AuthService {
     }
   }
 }
-

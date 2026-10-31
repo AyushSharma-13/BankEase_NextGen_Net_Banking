@@ -29,6 +29,13 @@ export class LoginComponent {
     this.errorMessage.set(null);
   }
 
+  quickLogin(user: string, pass: string): void {
+    this.username = user;
+    this.password = pass;
+    this.errorMessage.set(null);
+    this.onSubmit();
+  }
+
   onSubmit(): void {
     if (!this.username || !this.password) {
       this.errorMessage.set('Please enter both username and password.');
@@ -63,4 +70,3 @@ export class LoginComponent {
     });
   }
 }
-

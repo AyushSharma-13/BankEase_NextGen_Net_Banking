@@ -519,3 +519,76 @@
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+
+/* Fast Portal Switcher Segmented Control in Topbar */
+.portal-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f1f5f9;
+  border-radius: 9999px;
+  padding: 3px;
+  border: 1px solid #e2e8f0;
+  gap: 2px;
+}
+
+.segment-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.775rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.segment-btn:hover {
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.segment-btn.active {
+  background: #ffffff;
+  color: #1e40af;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.segment-btn.active i {
+  color: #2563eb;
+}
+
+/* Sidebar Portal Switcher Buttons */
+.portal-switch-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.portal-switch-btn.active-portal {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.role-badge-pill {
+  font-size: 0.625rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.role-customer { background: rgba(59, 130, 246, 0.25); color: #93c5fd; }
+.role-staff { background: rgba(245, 158, 11, 0.25); color: #fde68a; }
+.role-admin { background: rgba(239, 68, 68, 0.25); color: #fca5a5; }
+
+.text-primary-400 { color: #60a5fa !important; }
+.text-amber-400 { color: #fbbf24 !important; }
+.text-rose-400 { color: #fb7185 !important; }

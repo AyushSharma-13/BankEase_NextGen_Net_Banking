@@ -38,28 +38,42 @@
     <div class="auth-form-side">
       <div class="form-container">
         <div class="form-header">
-          <h1>Sign In to NetBanking</h1>
-          <p>Enter your credentials to access your banking dashboard.</p>
+          <h1>Sign In to BankEase</h1>
+          <p>Choose a demo portal below or enter your credentials.</p>
         </div>
 
-        <!-- Quick Demo Credentials Box -->
+        <!-- 1-Click Role Direct Access Box -->
         <div class="quick-credentials-card">
           <div class="quick-title">
-            <i class="fa-solid fa-wand-magic-sparkles text-primary-500"></i>
-            <span>Quick Demo Logins (One-Click Auto-Fill)</span>
+            <i class="fa-solid fa-bolt text-primary-500"></i>
+            <strong>Select Portal to Open (1-Click Instant Access)</strong>
           </div>
           <div class="quick-buttons">
-            <button type="button" (click)="quickFill('rajesh', 'Password@123')" class="quick-btn">
-              <span class="role-tag customer">CUSTOMER</span>
+            <button type="button" (click)="quickLogin('rajesh', 'Password@123')" class="quick-btn customer-btn" title="Open Customer NetBanking Portal">
+              <div class="quick-top">
+                <span class="role-tag customer"><i class="fa-solid fa-user"></i> CUSTOMER</span>
+                <span class="quick-arrow">Open Portal →</span>
+              </div>
               <span class="quick-name">Rajesh Sharma</span>
+              <span class="quick-sub">Savings, Transfers, Loans & FD</span>
             </button>
-            <button type="button" (click)="quickFill('staff', 'Password@123')" class="quick-btn">
-              <span class="role-tag staff">STAFF</span>
-              <span class="quick-name">Bank Staff</span>
+
+            <button type="button" (click)="quickLogin('staff', 'Password@123')" class="quick-btn staff-btn" title="Open Bank Staff Operations Portal">
+              <div class="quick-top">
+                <span class="role-tag staff"><i class="fa-solid fa-user-tie"></i> BANK STAFF</span>
+                <span class="quick-arrow">Open Portal →</span>
+              </div>
+              <span class="quick-name">Bank Staff Officer</span>
+              <span class="quick-sub">Loan Approvals & Investments</span>
             </button>
-            <button type="button" (click)="quickFill('admin', 'Admin@123')" class="quick-btn">
-              <span class="role-tag admin">ADMIN</span>
-              <span class="quick-name">Administrator</span>
+
+            <button type="button" (click)="quickLogin('admin', 'Admin@123')" class="quick-btn admin-btn" title="Open Administrator Command Portal">
+              <div class="quick-top">
+                <span class="role-tag admin"><i class="fa-solid fa-shield-halved"></i> ADMINISTRATOR</span>
+                <span class="quick-arrow">Open Portal →</span>
+              </div>
+              <span class="quick-name">System Administrator</span>
+              <span class="quick-sub">User Control & Audit Logs</span>
             </button>
           </div>
         </div>
@@ -82,7 +96,7 @@
                 name="username"
                 [(ngModel)]="username"
                 class="form-control with-icon"
-                placeholder="e.g. rajesh"
+                placeholder="e.g. rajesh, staff, or admin"
                 required
               />
             </div>
@@ -105,7 +119,7 @@
           </div>
 
           <button type="submit" class="btn btn-primary btn-block btn-lg" [disabled]="loading()">
-            <span *ngIf="!loading()"><i class="fa-solid fa-right-to-bracket"></i> Secure Sign In</span>
+            <span *ngIf="!loading()"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Selected Account</span>
             <span *ngIf="loading()"><i class="fa-solid fa-spinner fa-spin"></i> Authenticating...</span>
           </button>
         </form>
@@ -118,4 +132,3 @@
     </div>
   </div>
 </div>
-
