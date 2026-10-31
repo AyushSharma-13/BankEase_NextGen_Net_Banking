@@ -2,7 +2,7 @@ services:
   # Backend API Web Service
   - type: web
     name: bankease-backend
-    env: docker
+    runtime: docker
     dockerfilePath: ./BankEase-Backend/Dockerfile
     dockerContext: ./BankEase-Backend
     plan: free
@@ -17,8 +17,9 @@ services:
         value: BankEaseNextGenSecureSecretKeyForJWTAuthTokenGeneration2026BankEaseSuperSecureKey356
 
   # Frontend Web Service (Static Site)
-  - type: static
+  - type: web
     name: bankease-frontend
+    runtime: static
     buildCommand: cd BankEase-Frontend && npm install && npm run build
     staticPublishPath: ./BankEase-Frontend/dist/BankEase-Frontend/browser
     plan: free
